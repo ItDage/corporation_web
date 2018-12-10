@@ -164,7 +164,7 @@ export default {
       children.splice(index, 1)
     },
     loadData() {
-      this.$store.dispatch('getAllUser').then(res => { // 拉取user
+      this.$store.dispatch('getUsers').then(res => { // 拉取user
         const data = res.data.data // 获取用户数据
         this.data2 = data
       }).catch((err) => {

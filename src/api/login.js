@@ -30,3 +30,14 @@ export function getUserInfo(token) {
   })
 }
 
+export function getAllUser(token) {
+  const data = {
+    token
+  }
+  return request({
+    url: '/user/getAllUser',
+    method: 'post',
+    data
+  })
+}
+

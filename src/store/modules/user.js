@@ -1,5 +1,5 @@
 import { loginByUsername, logout, getUserInfo } from '@/api/login'
-import { getAllUser } from '@/api/userMethod'
+// import { getAllUser } from '@/api/userMethod'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -139,6 +139,7 @@ const user = {
     // 获取所有用户
     getUsers({ commit, state }) {
       return new Promise((resolve, reject) => {
+        console.log('req start2')
         getAllUser(state.token).then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('获取用户信息失败!')
