@@ -139,6 +139,11 @@ export default {
       this.$refs.tree2.filter(val)
     }
   },
+  mounted() {
+    console.log('req start')
+    this.loadData()
+    console.log('req end')
+  },
   methods: {
     append(data) {
       const newChild = { id: id++, label: 'testtest', children: [] }
@@ -157,6 +162,14 @@ export default {
       const children = parent.data.children || parent.data
       const index = children.findIndex(d => d.id === data.id)
       children.splice(index, 1)
+    },
+    loadData() {
+      this.$store.dispatch('getAllUser').then(res => { // 拉取user
+        const data = res.data.data // 获取用户数据
+        this.data2 = data
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 }
