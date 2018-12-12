@@ -1,33 +1,3 @@
-<!--<template>-->
-<!--<div>-->
-<!--<div style="margin-bottom:15px;">{{ $t('permission.roles') }}： {{ roles }}</div>-->
-<!--{{ $t('permission.switchRoles') }}：-->
-<!--<el-radio-group v-model="switchRoles">-->
-<!--<el-radio-button label="editor"/>-->
-<!--<el-radio-button label="admin"/>-->
-<!--</el-radio-group>-->
-<!--</div>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--export default {-->
-<!--computed: {-->
-<!--roles() {-->
-<!--return this.$store.getters.roles-->
-<!--},-->
-<!--switchRoles: {-->
-<!--get() {-->
-<!--return this.roles[0]-->
-<!--},-->
-<!--set(val) {-->
-<!--this.$store.dispatch('ChangeRoles', val).then(() => {-->
-<!--this.$emit('change')-->
-<!--})-->
-<!--}-->
-<!--}-->
-<!--}-->
-<!--}-->
-<!--</script>-->
 <template>
   <div class="custom-tree-container">
     <el-row :gutter="10">
@@ -41,13 +11,17 @@
             :data="data2"
             :props="defaultProps"
             :filter-node-method="filterNode"
+            node-key="id"
             class="filter-tree"
-            default-expand-all/>
+            default-expand-all
+            @node-click="getCheckedKeys"
+          />
       </div></el-col>
       <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="block">
           <p>使用 scoped slot</p>
           <el-tree
+            ref="roleTree"
             :data="data5"
             :expand-on-click-node="false"
             default-expand-all
@@ -117,21 +91,15 @@ export default {
       }]
     }]
     const data2 = [{
-      id: 1,
-      label: '一级 1',
-      children: [{
-        id: 4,
-        label: '二级 1-1'
-      }, {
-        id: 5,
-        label: 'test'
-      }]
     }]
     return {
       filterText: '',
       data2: JSON.parse(JSON.stringify(data2)),
-      data4: JSON.parse(JSON.stringify(data)),
-      data5: JSON.parse(JSON.stringify(data))
+      data5: JSON.parse(JSON.stringify(data)),
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   watch: {
@@ -140,9 +108,8 @@ export default {
     }
   },
   mounted() {
-    console.log('req start')
+    // 加载数据
     this.loadData()
-    console.log('req end')
   },
   methods: {
     append(data) {
@@ -156,12 +123,26 @@ export default {
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
-
     remove(node, data) {
       const parent = node.parent
       const children = parent.data.children || parent.data
       const index = children.findIndex(d => d.id === data.id)
       children.splice(index, 1)
+    },
+    getCheckedKeys(data) {
+      console.log(data.id)
+      this.setCheckedNodes()
+    },
+    setCheckedNodes() {
+      this.$refs.roleTree.setCheckedNodes(
+        [{
+          id: 9,
+          label: '三级 1-1-1'
+        }, {
+          id: 6,
+          label: '二级 2-2'
+        }]
+      )
     },
     loadData() {
       this.$store.dispatch('getUsers').then(res => { // 拉取user

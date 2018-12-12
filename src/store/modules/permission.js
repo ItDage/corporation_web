@@ -1,4 +1,6 @@
 import { asyncRouterMap, constantRouterMap } from '@/router'
+import router from '@/router'
+import Layout from '@/views/layout/Layout'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配

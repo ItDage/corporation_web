@@ -36,7 +36,7 @@ export function getAllUser(token) {
   }
   return request({
     url: '/user/getAllUser',
-    method: 'post',
+    method: 'GET',
     data
   })
 }
