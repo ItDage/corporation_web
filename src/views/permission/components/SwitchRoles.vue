@@ -1,6 +1,14 @@
 <template>
   <div class="custom-tree-container">
     <el-row :gutter="10">
+      <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+        <div class="block">
+          <el-button type="primary" size="small" @click="updateRoles">保存</el-button>
+        </div>
+      </el-col>
+    </el-row>
+    <hr>
+    <el-row :gutter="10">
       <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="block">
           <el-input
@@ -40,43 +48,13 @@
 <script>
 export default {
   data() {
-    const data2 = [{
-      id: 1,
-      label: '一级 1',
-      children: [{
-        id: 4,
-        label: '二级 1-1',
-        children: [{
-          id: 9,
-          label: '三级 1-1-1'
-        }, {
-          id: 10,
-          label: '三级 1-1-2'
-        }]
-      }]
-    }, {
-      id: 2,
-      label: '一级 2',
-      children: [{
-        id: 5,
-        label: '二级 2-1'
-      }, {
-        id: 6,
-        label: '二级 2-2'
-      }]
-    }, {
-      id: 3,
-      label: '一级 3',
-      children: [{
-        id: 7,
-        label: '二级 3-1'
-      }, {
-        id: 8,
-        label: '二级 3-2'
-      }]
-    }]
+    const data2 = [{ }]
     const data = [{ }]
     return {
+      submitData: {
+        selectUser: 0,
+        roleIds: ''
+      },
       filterText: '',
       filterText2: '',
       data: JSON.parse(JSON.stringify(data)),
@@ -95,11 +73,16 @@ export default {
       this.$refs.roleTree.filter(val)
     }
   },
-  mounted() {
+  created() {
     // 加载数据
     this.loadData()
     // 加载角色数据
     this.loadRoleData()
+  },
+  mounted() {
+    // 绑定第一个用户列表的角色
+    console.log(JSON.stringify(this.data))
+    // this.bindFirstUserRole()
   },
   methods: {
     filterNode(value, data) {
@@ -111,19 +94,16 @@ export default {
       return data.label.indexOf(value) !== -1
     },
     getCheckedKeys(data) {
-      console.log(data.id)
-      this.setCheckedNodes()
+      this.submitData.selectUser = data.id
+      this.setCheckedNodes(data)
     },
-    setCheckedNodes() {
-      this.$refs.roleTree.setCheckedNodes(
-        [{
-          id: 9,
-          label: '三级 1-1-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      )
+    setCheckedNodes(data) {
+      var arr = this.data[0].children
+      for (var index in arr) {
+        if (arr[index].id === data.id) {
+          this.$refs.roleTree.setCheckedNodes(arr[index].role)
+        }
+      }
     },
     loadData() {
       this.$store.dispatch('getUsers').then(res => { // 拉取user
@@ -136,8 +116,24 @@ export default {
     loadRoleData() {
       this.$store.dispatch('getAllRole').then(res => { // 拉取user
         const data = res.data.data // 获取用户数据
-        console.log('roles' + data)
         this.data2 = data
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    updateRoles() {
+      // 更新用户角色
+      console.log(this.$refs.roleTree.getCheckedNodes())
+      const roles = this.$refs.roleTree.getCheckedNodes()
+      var roleIds = new Array(roles.length)
+      for (var i = 0; i < roles.length; i++) {
+        roleIds.push(roles[i].id)
+      }
+      this.submitData.roleIds = roles
+      console.log('submitData' + JSON.stringify(this.submitData))
+      this.$store.dispatch('updateRole', this.submitData).then(res => { // 拉取user
+        const data = res.data.data // 获取用户数据
+        console.log(data)
       }).catch((err) => {
         console.log(err)
       })
