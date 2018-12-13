@@ -8,7 +8,7 @@
             placeholder="输入关键字进行过滤"/>
           <el-tree
             ref="tree2"
-            :data="data2"
+            :data="data"
             :props="defaultProps"
             :filter-node-method="filterNode"
             node-key="id"
@@ -19,43 +19,28 @@
       </div></el-col>
       <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="block">
-          <p>使用 scoped slot</p>
+          <el-input
+            v-model="filterText2"
+            placeholder="输入关键字进行过滤"/>
           <el-tree
             ref="roleTree"
-            :data="data5"
-            :expand-on-click-node="false"
-            default-expand-all
+            :data="data2"
+            :props="defaultProps"
+            :filter-node-method="filterNode2"
             node-key="id"
-            show-checkbox>
-            <span slot-scope = "{ node, data }" class="custom-tree-node">
-              <span>{{ node.label }}</span>
-              <span>
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="() => append(data)">
-                  Append
-                </el-button>
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="() => remove(node, data)">
-                  Delete
-                </el-button>
-              </span>
-            </span>
-          </el-tree>
-        </div>
-      </el-col>
+            show-checkbox
+            class="filter-tree"
+            default-expand-all
+          />
+      </div></el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-let id = 1000
 export default {
   data() {
-    const data = [{
+    const data2 = [{
       id: 1,
       label: '一级 1',
       children: [{
@@ -90,12 +75,12 @@ export default {
         label: '二级 3-2'
       }]
     }]
-    const data2 = [{
-    }]
+    const data = [{ }]
     return {
       filterText: '',
+      filterText2: '',
+      data: JSON.parse(JSON.stringify(data)),
       data2: JSON.parse(JSON.stringify(data2)),
-      data5: JSON.parse(JSON.stringify(data)),
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -105,29 +90,25 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.tree2.filter(val)
+    },
+    filterText2(val) {
+      this.$refs.roleTree.filter(val)
     }
   },
   mounted() {
     // 加载数据
     this.loadData()
+    // 加载角色数据
+    this.loadRoleData()
   },
   methods: {
-    append(data) {
-      const newChild = { id: id++, label: 'testtest', children: [] }
-      if (!data.children) {
-        this.$set(data, 'children', [])
-      }
-      data.children.push(newChild)
-    },
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
-    remove(node, data) {
-      const parent = node.parent
-      const children = parent.data.children || parent.data
-      const index = children.findIndex(d => d.id === data.id)
-      children.splice(index, 1)
+    filterNode2(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
     },
     getCheckedKeys(data) {
       console.log(data.id)
@@ -147,6 +128,15 @@ export default {
     loadData() {
       this.$store.dispatch('getUsers').then(res => { // 拉取user
         const data = res.data.data // 获取用户数据
+        this.data = data
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    loadRoleData() {
+      this.$store.dispatch('getAllRole').then(res => { // 拉取user
+        const data = res.data.data // 获取用户数据
+        console.log('roles' + data)
         this.data2 = data
       }).catch((err) => {
         console.log(err)

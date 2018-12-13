@@ -41,3 +41,10 @@ export function getAllUser(token) {
   })
 }
 
+export function getAllRoles() {
+  return request({
+    url: '/role/getAllRoles',
+    method: 'GET'
+  })
+}
+

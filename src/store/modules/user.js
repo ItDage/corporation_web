@@ -1,4 +1,4 @@
-import { loginByUsername, logout, getUserInfo, getAllUser } from '@/api/login'
+import { loginByUsername, logout, getUserInfo, getAllUser, getAllRoles } from '@/api/login'
 // import { getAllUser } from '@/api/userMethod'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
@@ -140,9 +140,21 @@ const user = {
     getUsers({ commit, state }) {
       return new Promise((resolve, reject) => {
         getAllUser(state.token).then(response => {
-          console.log(state.token)
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('获取用户信息失败!')
+          }
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 获取所有角色
+    getAllRole({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        getAllRoles(state.token).then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('获取角色信息失败!')
           }
           resolve(response)
         }).catch(error => {
