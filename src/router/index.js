@@ -139,6 +139,15 @@ export const asyncRouterMap = [
           title: 'directivePermission'
           // if do not set roles, means: this page does not require permission
         }
+      },
+      {
+        path: 'noticemanage',
+        component: () => import('@/views/manage/noticemanage'),
+        name: 'NoticeManage',
+        meta: {
+          title: 'noticeManage'
+          // if do not set roles, means: this page does not require permission
+        }
       }
     ]
   },
