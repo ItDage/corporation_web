@@ -1,5 +1,6 @@
-import { loginByUsername, logout, getUserInfo, getAllUser, getAllRoles } from '@/api/login'
+import { loginByUsername, logout, getUserInfo, getAllUser } from '@/api/login'
 // import { getAllUser } from '@/api/userMethod'
+import { updateRoles, getAllRoles } from '@/api/roleMethod'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -159,6 +160,17 @@ const user = {
           resolve(response)
         }).catch(error => {
           reject(error)
+        })
+      })
+    },
+    updateRole({ commit }, submitData) {
+      return new Promise((resolve, reject) => {
+        console.log(JSON.stringify(submitData))
+        updateRoles(submitData.selectUser, submitData.roleIds).then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('更新角色信息失败!')
+          }
+          resolve(response)
         })
       })
     }
