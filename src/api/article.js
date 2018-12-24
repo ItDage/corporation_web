@@ -39,3 +39,11 @@ export function updateArticle(data) {
     data
   })
 }
+// 获取所有文章--后台
+export function getArticle(data) {
+  return request({
+    url: '/article/getAll',
+    method: 'get',
+    data
+  })
+}
