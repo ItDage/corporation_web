@@ -49,7 +49,6 @@ export function getArticle(data) {
 }
 // 添加文章--后台
 export function add(data) {
-  alert(JSON.stringify(data) + 'ss')
   return request({
     url: '/article/add',
     method: 'post',
