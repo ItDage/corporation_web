@@ -47,3 +47,12 @@ export function getArticle(data) {
     data
   })
 }
+// 添加文章--后台
+export function add(data) {
+  alert(JSON.stringify(data) + 'ss')
+  return request({
+    url: '/article/add',
+    method: 'post',
+    data
+  })
+}

@@ -112,7 +112,7 @@
 
 <script>
 import TinymceDemo from '../components-demo/tinymce'
-import store from './store'
+// import store from './store/store'
 export default {
   components: { TinymceDemo },
   data() {
@@ -229,11 +229,12 @@ export default {
             })
             return false
           } else {
-            store.dispatch('GetUserInfo').then(res => {
+            var article = this.form
+            article['content'] = content
+            this.$store.dispatch('addArticle', { article }).then(res => {
               const data = res.data.data
               this.$message(JSON.stringify(data))
             })
-            alert('submit!')
           }
         } else {
           console.log('error submit!!')
