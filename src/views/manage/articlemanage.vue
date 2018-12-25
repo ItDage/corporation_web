@@ -28,7 +28,7 @@
         <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="success" @click="showForm">新增</el-button>
+        <el-button type="success" @click="showForm('form')">新增</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -87,40 +87,17 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"/>
     </div>
-
-    <!-- 新增文章-->
-    <el-dialog :visible.sync="dialogFormVisible" center title="新增文章" @open="resetForm('form')" @close="refreshTab">
-      <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm">
-        <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
-          <el-input v-model="form.title" autocomplete="off" placeholder="请输入标题"/>
-        </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="作者" prop="author">
-          <el-input v-model="form.author" autocomplete="off" placeholder="请输入作者"/>
-        </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="类型" prop="type">
-          <el-select v-model="form.type" placeholder="请选择文章类型">
-            <el-option label="公告" value="1000"/>
-            <el-option label="新闻" value="1001"/>
-            <el-option label="法律法规" value="1002"/>
-            <el-option label="其他" value="1003"/>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <TinymceDemo ref="tinymceDemo"/>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" plain @click="submitForm('form')">确 定</el-button>
-      </div>
-    </el-dialog>
+    <addArticle v-if="addArticleVisible" ref="form" :visible.sync="addArticleVisible" title="新增文章" />
 
   </div>
 </template>
 
 <script>
-import TinymceDemo from '../components-demo/tinymce'
-import { add, getArticle, delArticle } from '@/api/article'
+
+import addArticle from './addArticle'
+import { getArticle, delArticle } from '@/api/article'
 export default {
-  components: { TinymceDemo },
+  components: { addArticle },
   data() {
     return {
       tableData: [{
@@ -149,16 +126,6 @@ export default {
         type: null,
         publishDate: ''
       },
-      form: {
-        title: '',
-        type: '',
-        content: '',
-        author: '',
-        date2: '',
-        delivery: false,
-        resource: '',
-        desc: ''
-      },
       pickerOptions1: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -184,29 +151,9 @@ export default {
           }
         }]
       },
+      addArticleVisible: false,
       dialogFormVisible: false,
-      formLabelWidth: '120px',
       currentPage: 1,
-      rules: {
-        title: [
-          { required: true, message: '请输入标题', trigger: 'blur' },
-          { min: 1, message: '长度在大于1个字符', trigger: 'blur' }
-        ],
-        author: [
-          { required: true, message: '请输入作者', trigger: 'blur' },
-          { min: 1, message: '长度在大于1个字符', trigger: 'blur' }
-        ],
-        type: [
-          { required: true, message: '请选择文章类型', trigger: 'change' }
-        ],
-        content: [
-          { required: true, message: '请输入内容', trigger: 'blur' },
-          { min: 1, message: '长度在大于1个字符', trigger: 'blur' }
-        ],
-        date2: [
-          { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-        ]
-      },
       value2: '',
       totalSize: 400,
       pageSize: 10
@@ -252,7 +199,7 @@ export default {
           message: '已取消删除'
         })
       })
-      console.log(index, row)
+      console.log(index, id)
     },
     onSubmit() {
       this.currentPage = 1
@@ -261,44 +208,6 @@ export default {
     },
     filterTag(value, row) {
       return row.typeName === value
-    },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        var content = this.$refs.tinymceDemo.content
-        if (valid) {
-          if (content == null || content.length === 0) {
-            this.$message({
-              message: '文章内容不能为空',
-              type: 'warning'
-            })
-            return false
-          } else {
-            var article = this.form
-            article['content'] = content
-            return new Promise((resolve, reject) => {
-              add(JSON.stringify(article)).then(response => {
-                if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-                  reject('新增文章失败!')
-                }
-                if (response.data.code === 200) {
-                  this.$message({
-                    message: response.data.message,
-                    type: 'success'
-                  })
-                  this.dialogFormVisible = false
-                } else {
-                  this.$message.error(response.data.message)
-                }
-              }).catch(error => {
-                reject(error)
-              })
-            })
-          }
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
@@ -311,8 +220,12 @@ export default {
       this.currentPage = val
       this.loadTableData(val, this.pageSize, this.formInline.title, this.formInline.author, this.formInline.publishDate, this.formInline.type)
     },
-    showForm() {
-      this.dialogFormVisible = true
+    showForm(refForm) {
+      if (this.$refs[refForm]) {
+        this.$refs[refForm].initForm()
+      }
+      this.addArticleVisible = true
+      // this.dialogFormVisible = true
     },
     loadTableData(currentPage, size, title, author, publishDate, type) {
       const param = {

@@ -1,6 +1,6 @@
 <template>
   <!-- 新增文章-->
-  <el-dialog :visible.sync="dialogFormVisible" center title="新增文章" @open="resetForm('form')" @close="refreshTab">
+  <el-dialog :visible.sync="visible" :title.sync="title" center @open="resetForm('form')" @close="refreshTab">
     <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm">
       <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
         <el-input v-model="form.title" autocomplete="off" placeholder="请输入标题"/>
@@ -25,35 +25,111 @@
   </el-dialog>
 </template>
 <script>
+import TinymceDemo from '../components-demo/tinymce'
+import { add } from '@/api/article'
 export default {
+  components: { TinymceDemo },
   props: {
     visible: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: 'xx'
     }
   },
   data() {
     return {
       orderForm: {},
       addRules: {
-        fromContact: [{ required: true, message: "请输入联系人姓名", trigger: 'blur'}],
-        fromPhone: [{required: true, message: "请输入", trigger: 'blur'}]
-      }
+        fromContact: [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
+        fromPhone: [{ required: true, message: '请输入', trigger: 'blur' }]
+      },
+      form: {
+        title: '',
+        type: '',
+        content: '',
+        author: '',
+        date2: '',
+        delivery: false,
+        resource: '',
+        desc: ''
+      },
+      rules: {
+        title: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+          { min: 1, message: '长度在大于1个字符', trigger: 'blur' }
+        ],
+        author: [
+          { required: true, message: '请输入作者', trigger: 'blur' },
+          { min: 1, message: '长度在大于1个字符', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '请选择文章类型', trigger: 'change' }
+        ],
+        content: [
+          { required: true, message: '请输入内容', trigger: 'blur' },
+          { min: 1, message: '长度在大于1个字符', trigger: 'blur' }
+        ],
+        date2: [
+          { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+        ]
+      },
+      formLabelWidth: '120px'
     }
   },
   methods: {
     initForm() {
-      this.orderForm = {
-        fromContact: '',
-        fromPhone: ''
-      }
-      if (this.$refs.orderForm) {
-        this.$refs.orderForm.resetFields()
+      // this.orderForm = {
+      //   fromContact: '',
+      //   fromPhone: ''
+      // }
+      if (this.$refs.form) {
+        this.$refs.form.resetFields()
       }
     },
-    cancelModal() {
+    refreshTab() {
       // 关闭弹窗，触发父组件修改visible值
-      this.$emit('update:visible', false);
+      this.$emit('update:visible', false)
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        var content = this.$refs.tinymceDemo.content
+        if (valid) {
+          if (content == null || content.length === 0) {
+            this.$message({
+              message: '文章内容不能为空',
+              type: 'warning'
+            })
+            return false
+          } else {
+            var article = this.form
+            article['content'] = content
+            return new Promise((resolve, reject) => {
+              add(JSON.stringify(article)).then(response => {
+                if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+                  reject('新增文章失败!')
+                }
+                if (response.data.code === 200) {
+                  this.$message({
+                    message: response.data.message,
+                    type: 'success'
+                  })
+                  this.dialogFormVisible = false
+                } else {
+                  this.$message.error(response.data.message)
+                }
+              }).catch(error => {
+                reject(error)
+              })
+            })
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     }
   }
 }

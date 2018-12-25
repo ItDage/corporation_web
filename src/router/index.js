@@ -142,7 +142,7 @@ export const asyncRouterMap = [
       },
       {
         path: 'noticemanage',
-        component: () => import('@/views/manage/noticemanage'),
+        component: () => import('@/views/manage/articlemanage'),
         name: 'NoticeManage',
         meta: {
           title: 'noticeManage'
