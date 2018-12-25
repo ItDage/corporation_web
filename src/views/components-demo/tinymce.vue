@@ -22,6 +22,9 @@ export default {
       content:
       `文章内容`
     }
+  },
+  mounted() {
+    this.content = '文章内容'
   }
 }
 </script>

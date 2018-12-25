@@ -11,9 +11,9 @@ const article = {
 
   actions: {
     // 获取所有文章
-    getArticles({ commit, state }) {
+    getArticles({ state }, data) {
       return new Promise((resolve, reject) => {
-        getAllArticle(state.token).then(response => {
+        getAllArticle(data).then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('获取文章信息失败!')
           }
@@ -23,9 +23,8 @@ const article = {
         })
       })
     },
-    addArticle({ commit, state }, data) {
+    addArticle({ state }, data) {
       return new Promise((resolve, reject) => {
-        alert(JSON.stringify(data))
         add(JSON.stringify(data)).then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('获取文章信息失败!')

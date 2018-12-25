@@ -42,8 +42,8 @@ export function updateArticle(data) {
 // 获取所有文章--后台
 export function getArticle(data) {
   return request({
-    url: '/article/getAll',
-    method: 'get',
+    url: '/article/getAllArticle',
+    method: 'post',
     data
   })
 }
@@ -55,3 +55,12 @@ export function add(data) {
     data
   })
 }
+// 删除文章--后台
+export function delArticle(data) {
+  return request({
+    url: '/article/delete',
+    method: 'delete',
+    data
+  })
+}
+
