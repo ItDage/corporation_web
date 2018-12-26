@@ -101,6 +101,7 @@
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
+import { sendValidCode } from '@/api/userMethod'
 
 export default {
   name: 'Login',
@@ -239,6 +240,25 @@ export default {
     },
     sendValidCode() {
       // hh
+      const param = { 'email': this.ruleForm.email }
+      alert(JSON.stringify(param))
+      return new Promise((resolve, reject) => {
+        sendValidCode(this.ruleForm.email).then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('发送验证码失败!')
+          }
+          if (response.data.code === 200) {
+            this.$message({
+              message: response.data.message,
+              type: 'success'
+            })
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
     }
   }
 }

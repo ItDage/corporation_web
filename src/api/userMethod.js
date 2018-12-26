@@ -11,3 +11,14 @@ export function getAllUser(token) {
     data
   })
 }
+
+export function sendValidCode(email) {
+  const data = {
+    email
+  }
+  return request({
+    url: '/user/sendValidCode',
+    method: 'post',
+    data
+  })
+}
