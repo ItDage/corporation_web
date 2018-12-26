@@ -86,6 +86,7 @@ export default {
   },
   methods: {
     initTinymce() {
+      alert('init')
       const _this = this
       window.tinymce.init({
         language: this.language,
@@ -161,10 +162,10 @@ export default {
         window.tinymce.get(this.tinymceId).destroy()
       }
     },
-    setContent(value) {
+    setContentS(value) {
       window.tinymce.get(this.tinymceId).setContent(value)
     },
-    getContent() {
+    getContentS() {
       window.tinymce.get(this.tinymceId).getContent()
     },
     imageSuccessCBK(arr) {

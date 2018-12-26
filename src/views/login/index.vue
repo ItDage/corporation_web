@@ -45,19 +45,53 @@
         <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
       </div>
       <div class="tips">
-        <span style="margin-right:18px;">{{ $t('login.username') }} : editor</span>
+        <span style="margin-right:18px;">{{ $t('login.username') }} : editor2</span>
         <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
       </div>
-
-      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button>
+      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.register') }}</el-button>
     </el-form>
 
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
-      {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
-      <social-sign />
+    <el-dialog :title="$t('login.register')" :visible.sync="showDialog" center append-to-body>
+      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="ruleForm.name"/>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-col :span="20">
+            <el-input v-model="ruleForm.email"/>
+          </el-col>
+          <el-col :span="4">
+            <el-button type="primary" @click.prevent="sendValidCode">发送验证码</el-button>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="ruleForm.gender" placeholder="性别">
+            <el-option label="男" value="1"/>
+            <el-option label="女" value="0"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="出生日期">
+          <el-col :span="7">
+            <el-date-picker v-model="ruleForm.date1" type="date" placeholder="选择日期" style="width: 94%;"/>
+          </el-col>
+          <el-col :span="2" class="line"/>
+          <el-col :span="11"/>
+        </el-form-item>
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="ruleForm.type" placeholder="客户类型">
+            <el-option label="社团管理员" value="600"/>
+            <el-option label="普通用户" value="601"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="验证码" prop="validCode">
+          <el-input v-model="ruleForm.validCode"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <!--<social-sign />-->
     </el-dialog>
 
   </div>
@@ -90,6 +124,38 @@ export default {
       loginForm: {
         username: 'admin',
         password: '123456'
+      },
+      ruleForm: {
+        name: '',
+        gender: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: '',
+        email: '',
+        validCode: ''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ],
+        gender: [
+          { required: true, message: '请选择性别', trigger: 'change' }
+        ],
+        type: [
+          { required: true, message: '请选择类型', trigger: 'change' }
+        ],
+        validCode: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { min: 4, max: 4, message: '长度 4 个字符', trigger: 'blur' }
+        ]
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -157,6 +223,22 @@ export default {
       //     this.$router.push({ path: '/' })
       //   })
       // }
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!')
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
+    sendValidCode() {
+      // hh
     }
   }
 }

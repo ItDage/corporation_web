@@ -28,7 +28,7 @@
         <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="success" @click="showForm('form')">新增</el-button>
+        <el-button type="success" @click="showForm('addArticle')">新增</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -40,7 +40,7 @@
         prop="title"
         label="标题"/>
       <el-table-column
-        prop="content"
+        prop="subContent"
         label="内容"/>
       <el-table-column
         prop="author"
@@ -68,7 +68,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            @click="handleEdit(scope.$index, scope.row, 'addArticle')">编辑</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -87,8 +87,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"/>
     </div>
-    <addArticle v-if="addArticleVisible" ref="form" :visible.sync="addArticleVisible" title="新增文章" />
-
+    <addArticle v-if="addArticleVisible" ref="addArticle" :visible.sync="addArticleVisible" :title.sync="title" :operator.sync="opr" :article.sync="article" @closeMain="parentFn" />
   </div>
 </template>
 
@@ -102,7 +101,7 @@ export default {
     return {
       tableData: [{
         date: '2016-05-02',
-        'name': '王小虎',
+        name: '王小虎',
         author: 'doctor',
         address: '上海市普陀区金沙江路 1518 弄',
         tag: '家'
@@ -156,15 +155,31 @@ export default {
       currentPage: 1,
       value2: '',
       totalSize: 400,
-      pageSize: 10
+      pageSize: 10,
+      title: '新增文章',
+      tableRefresh: false,
+      opr: 'add',
+      article: {
+        id: 1,
+        title: null,
+        author: null,
+        content: null,
+        type: 1000
+      }
     }
   },
   created() {
     this.loadTableData(this.currentPage, this.pageSize)
   },
   methods: {
-    handleEdit(index, row) {
-      console.log(index, row)
+    handleEdit(index, row, refForm) {
+      this.addArticleVisible = true
+      this.article.id = row.id
+      this.article.title = row.title
+      this.article.author = row.author
+      this.article.content = row.content
+      this.article.type = row.type
+      this.opr = 'edit'
     },
     handleDelete(index, id) {
       const param = {
@@ -199,7 +214,6 @@ export default {
           message: '已取消删除'
         })
       })
-      console.log(index, id)
     },
     onSubmit() {
       this.currentPage = 1
@@ -208,9 +222,6 @@ export default {
     },
     filterTag(value, row) {
       return row.typeName === value
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
     },
     handleSizeChange(val) {
       this.pageSize = val
@@ -221,11 +232,8 @@ export default {
       this.loadTableData(val, this.pageSize, this.formInline.title, this.formInline.author, this.formInline.publishDate, this.formInline.type)
     },
     showForm(refForm) {
-      if (this.$refs[refForm]) {
-        this.$refs[refForm].initForm()
-      }
       this.addArticleVisible = true
-      // this.dialogFormVisible = true
+      this.opr = 'add'
     },
     loadTableData(currentPage, size, title, author, publishDate, type) {
       const param = {
@@ -271,6 +279,12 @@ export default {
           color = 'danger'
       }
       return color
+    },
+    parentFn(data) {
+      console.log(data + 'ssss')
+      if (data) {
+        this.refreshTab()
+      }
     }
   }
 }
