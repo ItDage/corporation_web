@@ -51,44 +51,50 @@
       <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.register') }}</el-button>
     </el-form>
 
-    <el-dialog :title="$t('login.register')" :visible.sync="showDialog" center append-to-body>
-      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name"/>
+    <el-dialog :title="$t('login.register')" :visible.sync="showDialog" center append-to-body @opened="resetForm('registerForm')">
+      <el-form ref="registerForm" :model="registerForm" :rules="rules" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="姓名" prop="username">
+          <el-input v-model="registerForm.username"/>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-col :span="20">
-            <el-input v-model="ruleForm.email"/>
+            <el-input v-model="registerForm.email"/>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" @click.prevent="sendValidCode">发送验证码</el-button>
+            <el-button :disabled="isSend" type="primary" @click.prevent="sendValidCode('registerForm')">发送验证码</el-button>
           </el-col>
         </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="registerForm.password" type="password" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input v-model="registerForm.checkPass" type="password" autocomplete="off"/>
+        </el-form-item>
         <el-form-item label="性别" prop="gender">
-          <el-select v-model="ruleForm.gender" placeholder="性别">
+          <el-select v-model="registerForm.gender" placeholder="性别">
             <el-option label="男" value="1"/>
             <el-option label="女" value="0"/>
           </el-select>
         </el-form-item>
         <el-form-item label="出生日期">
           <el-col :span="7">
-            <el-date-picker v-model="ruleForm.date1" type="date" placeholder="选择日期" style="width: 94%;"/>
+            <el-date-picker v-model="registerForm.birth" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="选择日期" style="width: 94%;"/>
           </el-col>
           <el-col :span="2" class="line"/>
           <el-col :span="11"/>
         </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-select v-model="ruleForm.type" placeholder="客户类型">
-            <el-option label="社团管理员" value="600"/>
-            <el-option label="普通用户" value="601"/>
+        <el-form-item label="类型" prop="commonType">
+          <el-select v-model="registerForm.commonType" placeholder="客户类型">
+            <el-option label="社团管理员" value="2"/>
+            <el-option label="普通用户" value="3"/>
           </el-select>
         </el-form-item>
         <el-form-item label="验证码" prop="validCode">
-          <el-input v-model="ruleForm.validCode"/>
+          <el-input v-model="registerForm.validCode"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button type="primary" @click="submitForm('registerForm')">立即创建</el-button>
+          <el-button @click="resetForm('registerForm')">重置</el-button>
         </el-form-item>
       </el-form>
       <!--<social-sign />-->
@@ -101,7 +107,7 @@
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
-import { sendValidCode } from '@/api/userMethod'
+import { sendValidCode, register } from '@/api/userMethod'
 
 export default {
   name: 'Login',
@@ -121,27 +127,44 @@ export default {
         callback()
       }
     }
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.registerForm.checkPass !== '') {
+          this.$refs.registerForm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.registerForm.password) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: 'admin',
         password: '123456'
       },
-      ruleForm: {
-        name: '',
+      registerForm: {
+        username: '',
         gender: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: '',
+        birth: '',
         email: '',
-        validCode: ''
+        validCode: '',
+        password: '',
+        checkPass: '',
+        commonType: ''
       },
       rules: {
-        name: [
+        username: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 8, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
         email: [
           { required: true, message: '请输入邮箱地址', trigger: 'blur' },
@@ -150,12 +173,18 @@ export default {
         gender: [
           { required: true, message: '请选择性别', trigger: 'change' }
         ],
-        type: [
+        commonType: [
           { required: true, message: '请选择类型', trigger: 'change' }
         ],
         validCode: [
           { required: true, message: '请输入验证码', trigger: 'blur' },
           { min: 4, max: 4, message: '长度 4 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { required: true, validator: validatePass2, trigger: 'blur' }
         ]
       },
       loginRules: {
@@ -165,7 +194,8 @@ export default {
       passwordType: 'password',
       loading: false,
       showDialog: false,
-      redirect: undefined
+      redirect: undefined,
+      isSend: false
     }
   },
   watch: {
@@ -228,7 +258,23 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          return new Promise((resolve, reject) => {
+            register(JSON.stringify(this.registerForm)).then(response => {
+              if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+                reject('注册失败!')
+              }
+              if (response.data.code === 200) {
+                this.$message({
+                  message: response.data.message,
+                  type: 'success'
+                })
+              } else {
+                this.$message.error(response.data.message)
+              }
+            }).catch(error => {
+              reject(error)
+            })
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -238,26 +284,30 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
-    sendValidCode() {
-      // hh
-      const param = { 'email': this.ruleForm.email }
-      alert(JSON.stringify(param))
-      return new Promise((resolve, reject) => {
-        sendValidCode(this.ruleForm.email).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('发送验证码失败!')
-          }
-          if (response.data.code === 200) {
-            this.$message({
-              message: response.data.message,
-              type: 'success'
+    sendValidCode(formName) {
+      this.$refs.registerForm.validateField('email', (valid) => {
+        if (!valid) {
+          this.isSend = true
+          return new Promise((resolve, reject) => {
+            sendValidCode(this.registerForm.email).then(response => {
+              if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+                reject('发送验证码失败!')
+                this.isSend = false
+              }
+              if (response.data.code === 200) {
+                this.$message({
+                  message: response.data.message,
+                  type: 'success'
+                })
+              } else {
+                this.$message.error(response.data.message)
+              }
+              this.isSend = false
+            }).catch(error => {
+              reject(error)
             })
-          } else {
-            this.$message.error(response.data.message)
-          }
-        }).catch(error => {
-          reject(error)
-        })
+          })
+        }
       })
     }
   }
