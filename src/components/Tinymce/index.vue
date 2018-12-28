@@ -86,7 +86,6 @@ export default {
   },
   methods: {
     initTinymce() {
-      alert('init')
       const _this = this
       window.tinymce.init({
         language: this.language,

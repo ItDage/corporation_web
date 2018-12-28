@@ -1,6 +1,6 @@
 <template>
   <!-- 新增文章-->
-  <el-dialog :visible.sync="visible" :title.sync="title" :article.sync="article" :operator.sync="operator" :before-close="refreshTab" center @open="resetForm('form')">
+  <el-dialog :visible.sync="visible" :title.sync="title" :article.sync="article" :operator.sync="operator" :before-close="refreshTab" center @opened="resetForm('form')">
     <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm">
       <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
         <el-input v-model="form.title" autocomplete="off" placeholder="请输入标题"/>
@@ -17,11 +17,13 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <TinymceDemo ref="editor" v-model="articleContent" :height="300"/>
+    <TinymceDemo ref="content" v-model="articleContent" :height="300"/>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <!--<el-button @click="visible = false">取 消</el-button>-->
+      <el-button @click="resetForm('form')">取 消</el-button>
       <el-button type="primary" plain @click="submitForm('form')">确 定</el-button>
     </div>
+    <!--<span>{{ printArticle }}</span>-->
   </el-dialog>
 </template>
 <script>
@@ -80,17 +82,30 @@ export default {
       },
       formLabelWidth: '120px',
       articleContent: '',
-      addArticleVisible: true
+      addArticleVisible: true,
+      opr: 'add'
     }
   },
-  // watch: {
-  //   articleContent: {
-  //     handler: function(old, nval) {
-  //       alert(nval + 'new')
-  //       this.article.content = nval
-  //     }
+  // computed: {
+  //   printArticle: function() {
+  //     return JSON.stringify(this.articleContent)
   //   }
   // },
+  watch: {
+  },
+  mounted() {
+    this.opr = this.operator
+    if (this.opr === 'edit') {
+      // 编辑--1
+      this.form = this.article
+      this.articleContent = this.article.content
+      this.form.commonType = 1
+    } else {
+      // 新增--2
+      this.form.commonType = 2
+      console.log('2')
+    }
+  },
   methods: {
     refreshTab() {
       // 关闭弹窗，触发父组件修改visible值
@@ -100,15 +115,6 @@ export default {
     resetForm(formName) {
       console.log('reset')
       this.$refs[formName].resetFields()
-      if (this.operator === 'edit') {
-        // this.form = this.article
-        // 编辑--1
-        this.form.commonType = 1
-      } else {
-        // 新增--2
-        this.form.commonType = 2
-        console.log('2')
-      }
     },
     submitForm(formName) {
       alert(JSON.stringify(this.form))

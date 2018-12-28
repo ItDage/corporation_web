@@ -84,7 +84,7 @@ export const constantRouterMap = [
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'Documentation',
-        meta: { title: '文档', icon: 'documentation', noCache: true }
+        meta: { title: 'documentation', icon: 'documentation', noCache: true }
       }
     ]
   },
@@ -151,7 +151,6 @@ export const asyncRouterMap = [
       }
     ]
   },
-
   {
     path: '/icon',
     component: Layout,

@@ -181,7 +181,8 @@ export default {
           { min: 4, max: 4, message: '长度 4 个字符', trigger: 'blur' }
         ],
         password: [
-          { required: true, validator: validatePass, trigger: 'blur' }
+          { required: true, validator: validatePass, trigger: 'blur' },
+          { min: 6, message: '长度 6 个字符', trigger: 'blur' }
         ],
         checkPass: [
           { required: true, validator: validatePass2, trigger: 'blur' }
@@ -268,6 +269,7 @@ export default {
                   message: response.data.message,
                   type: 'success'
                 })
+                this.showDialog = false
               } else {
                 this.$message.error(response.data.message)
               }

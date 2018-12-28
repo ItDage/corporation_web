@@ -35,18 +35,25 @@
       :data="tableData"
       style="width: 100%">
       <el-table-column
-        type="index"/>
+        type="index"
+        align="center"/>
       <el-table-column
         prop="title"
         label="标题"/>
       <el-table-column
-        prop="subContent"
-        label="内容"/>
+        label="内容"
+        prop="subContent">
+        <!--<template slot-scope="scope">-->
+        <!--<div v-model="scope.row.subContent"> {{ scope.row.subContent }} </div>-->
+        <!--</template>-->
+      </el-table-column>
       <el-table-column
         prop="author"
-        label="作者"/>
+        label="作者"
+        align="center"/>
       <el-table-column
-        label="日期">
+        label="日期"
+        align="center">
         <template slot-scope="scope">
           <i class="el-icon-time"/>
           <span style="margin-left: 10px">{{ scope.row.publishDate }}</span>
@@ -57,14 +64,15 @@
         :filter-method="filterTag"
         prop="typeName"
         label="类型"
-        filter-placement="bottom-end">
+        filter-placement="bottom-end"
+        align="center">
         <template slot-scope="scope">
           <el-tag
             :type="transferTag(scope)"
             disable-transitions>{{ scope.row.typeName }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -180,6 +188,7 @@ export default {
       this.article.content = row.content
       this.article.type = row.type
       this.opr = 'edit'
+      this.title = '编辑文章'
     },
     handleDelete(index, id) {
       const param = {
@@ -251,6 +260,7 @@ export default {
           }
           if (response.data.code === 200) {
             this.tableData = response.data.tableData
+            // alert(JSON.stringify(this.tableData))
             this.totalSize = response.data.total
           } else {
             this.$message.error(response.data.message)
