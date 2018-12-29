@@ -30,6 +30,9 @@
       <el-form-item>
         <el-button type="success" @click="showForm('addArticle')">新增</el-button>
       </el-form-item>
+      <el-form-item>
+        <el-button type="success" @click="uploadFileForm('addArticle')">新增模板</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       :data="tableData"
@@ -96,15 +99,17 @@
         @current-change="handleCurrentChange"/>
     </div>
     <addArticle v-if="addArticleVisible" ref="addArticle" :visible.sync="addArticleVisible" :title.sync="title" :operator.sync="opr" :article.sync="article" @closeMain="parentFn" />
+    <uploadFile v-if="uploadFileVisible" ref="uploadFile" :visible.sync="uploadFileVisible" :show-input.sync="showInput" @closeMain="parentFn" />
   </div>
 </template>
 
 <script>
 
-import addArticle from './addArticle'
+import addArticle from '../addArticle'
+import uploadFile from './uploadFile'
 import { getArticle, delArticle } from '@/api/article'
 export default {
-  components: { addArticle },
+  components: { addArticle, uploadFile },
   data() {
     return {
       tableData: [{
@@ -159,6 +164,7 @@ export default {
         }]
       },
       addArticleVisible: false,
+      uploadFileVisible: false,
       dialogFormVisible: false,
       currentPage: 1,
       value2: '',
@@ -167,6 +173,7 @@ export default {
       title: '新增文章',
       tableRefresh: false,
       opr: 'add',
+      showInput: true,
       article: {
         id: 1,
         title: null,
@@ -244,6 +251,10 @@ export default {
       this.addArticleVisible = true
       this.opr = 'add'
     },
+    uploadFileForm() {
+      this.uploadFileVisible = true
+      this.opr = 'add'
+    },
     loadTableData(currentPage, size, title, author, publishDate, type) {
       const param = {
         'currentPage': currentPage,
@@ -291,6 +302,7 @@ export default {
       return color
     },
     parentFn(data) {
+      console.log(data + 'ssss')
       if (data) {
         this.refreshTab()
       }

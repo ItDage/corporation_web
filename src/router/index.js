@@ -148,6 +148,15 @@ export const asyncRouterMap = [
           title: 'noticeManage'
           // if do not set roles, means: this page does not require permission
         }
+      },
+      {
+        path: 'templatemanage',
+        component: () => import('@/views/manage/template/templatemanage'),
+        name: 'TemlateManage',
+        meta: {
+          title: 'templateManage'
+          // if do not set roles, means: this page does not require permission
+        }
       }
     ]
   },

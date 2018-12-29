@@ -9,6 +9,7 @@ export default {
     directivePermission: '指令权限',
     icons: '图标',
     noticeManage: '通知管理',
+    templateManage: '模板管理',
     components: '组件',
     componentIndex: '介绍',
     tinymce: '富文本编辑器',
