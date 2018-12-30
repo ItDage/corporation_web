@@ -20,6 +20,7 @@
         :data="dataObj"
         :before-upload="beforeUpload"
         :on-success="uploadSuccess"
+        :on-remove="del"
         :multiple="true"
         action="//upload.qiniu.com"
         drag>
@@ -31,6 +32,7 @@
 </template>
 <script>
 import { getToken, upload } from '@/api/qiniu' // 获取七牛token 后端通过Access Key,Secret Key,bucket等生成token
+import { delFile } from '@/api/qiniu'
 // 七牛官方sdk https://developer.qiniu.com/sdk#official-sdk
 export default{
   props: {
@@ -93,7 +95,6 @@ export default{
       const name = file.name
       return new Promise((resolve, reject) => {
         upload(id, name, this.form.type).then(response => {
-          console.log(JSON.stringify(response.data))
           const code = response.data.code
           if (code === 200) {
             this.$notify({
@@ -111,6 +112,29 @@ export default{
         }).catch(err => {
           console.log(err)
           reject(false)
+        })
+      })
+    },
+    del(file, fileList) {
+      const param = {
+        'id': file.response.key
+      }
+      return new Promise((resolve, reject) => {
+        delFile(param).then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('删除文件失败!')
+          }
+          if (response.data.code === 200) {
+            this.loadTableData(this.currentPage, this.pageSize, this.formInline.name, this.formInline.uploadUser, this.formInline.uploadDate, this.formInline.type)
+            this.$message({
+              type: 'success',
+              message: response.data.message
+            })
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
         })
       })
     },

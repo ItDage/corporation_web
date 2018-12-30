@@ -161,6 +161,40 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/check',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/check/index'),
+        name: 'Check',
+        meta: {
+          title: 'check',
+          icon: 'edit',
+          noCache: true,
+          roles: ['common']
+        }
+      }
+    ]
+  },
+  {
+    path: '/checked',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/check/checked/checkmanage'),
+        name: 'Checked',
+        meta: {
+          title: 'checked',
+          icon: 'edit',
+          noCache: true,
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+  {
     path: '/icon',
     component: Layout,
     children: [

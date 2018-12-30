@@ -1,45 +1,49 @@
 <template>
-  <div>
-    <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
-      <el-form-item label="标题">
-        <el-input v-model="formInline.title" placeholder="标题"/>
-      </el-form-item>
-      <el-form-item label="作者">
-        <el-input v-model="formInline.author" placeholder="作者"/>
-      </el-form-item>
-      <el-form-item label="发布时间">
-        <el-date-picker
-          v-model="formInline.publishDate"
-          :picker-options="pickerOptions1"
-          align="right"
-          type="date"
-          placeholder="选择日期"/>
-      </el-form-item>
-      <el-form-item label="文章类型">
-        <el-select v-model="formInline.type" filterable placeholder="文章类型" clearable>
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="success" @click="showForm('addArticle')">新增</el-button>
-      </el-form-item>
-    </el-form>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
+        <el-form-item label="标题">
+          <el-input v-model="formInline.title" placeholder="标题"/>
+        </el-form-item>
+        <el-form-item label="作者">
+          <el-input v-model="formInline.author" placeholder="作者"/>
+        </el-form-item>
+        <el-form-item label="发布时间">
+          <el-date-picker
+            v-model="formInline.publishDate"
+            :picker-options="pickerOptions1"
+            align="right"
+            type="date"
+            placeholder="选择日期"/>
+        </el-form-item>
+        <el-form-item label="文章类型">
+          <el-select v-model="formInline.type" filterable placeholder="文章类型" clearable>
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="success" @click="showForm('addArticle')">新增</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <el-table
       :data="tableData"
       style="width: 100%">
       <el-table-column
         type="index"
-        align="center"/>
+        align="center"
+        width="65"/>
       <el-table-column
         prop="title"
-        label="标题"/>
+        label="标题"
+        width="150px"/>
       <el-table-column
         label="内容"
         prop="subContent">

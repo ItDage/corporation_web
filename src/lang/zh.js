@@ -8,6 +8,8 @@ export default {
     pagePermission: '页面权限',
     directivePermission: '指令权限',
     icons: '图标',
+    check: '资质申请',
+    checked: '资质审查',
     noticeManage: '通知管理',
     templateManage: '模板管理',
     components: '组件',

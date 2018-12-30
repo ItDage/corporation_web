@@ -2,11 +2,14 @@
   <div class="app-container">
     <div class="filter-container">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
-        <el-form-item label="文件名">
-          <el-input v-model="formInline.name" placeholder="文件名"/>
+        <el-form-item label="申请人">
+          <el-input v-model="formInline.creater" placeholder="申请人"/>
         </el-form-item>
-        <el-form-item label="上传者">
-          <el-input v-model="formInline.uploadUser" placeholder="上传者"/>
+        <el-form-item label="证件号码">
+          <el-input v-model="formInline.uploadUser" placeholder="身份证号码"/>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <el-input v-model="formInline.phone" placeholder="手机号"/>
         </el-form-item>
         <el-form-item label="上传时间">
           <el-date-picker
@@ -16,8 +19,8 @@
             type="date"
             placeholder="选择日期"/>
         </el-form-item>
-        <el-form-item label="模板类型">
-          <el-select v-model="formInline.type" filterable placeholder="模板类型" clearable>
+        <el-form-item label="是否通过">
+          <el-select v-model="formInline.type" filterable placeholder="是否通过" clearable>
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -31,9 +34,6 @@
         <el-form-item>
           <el-button type="success" @click="showForm('addArticle')">新增</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-button type="success" @click="uploadFileForm('addArticle')">新增模板</el-button>
-        </el-form-item>
       </el-form>
     </div>
     <el-table
@@ -41,36 +41,55 @@
       style="width: 100%">
       <el-table-column
         type="index"
-        align="center"/>
+        align="center"
+        width="65"/>
       <el-table-column
-        prop="name"
-        label="文件名"/>
+        prop="school"
+        label="学校"
+        width="150px"/>
       <el-table-column
-        prop="uploadUser"
-        label="上传者"
-        align="center"/>
+        prop="user.username"
+        label="申请人"
+        width="65"/>
       <el-table-column
-        label="日期"
-        align="center">
+        prop="creater"
+        label="邮箱"
+        width="120"/>
+      <el-table-column
+        prop="identification"
+        label="身份证号"
+        align="center"
+        width="160"/>
+      <el-table-column
+        prop="phone"
+        label="手机号"
+        align="center"
+        width="120"/>
+      <el-table-column
+        label="申请时间"
+        align="center"
+        width="120">
         <template slot-scope="scope">
           <i class="el-icon-time"/>
-          <span style="margin-left: 10px">{{ scope.row.uploadDate }}</span>
+          <span style="margin-left: 10px">{{ scope.row.createDate }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :filters="[{ text: '认证模板', value: '认证模板' }, { text: '必填模板', value: '必填模板' }, { text: '其他模板', value: '其他模板' }]"
-        :filter-method="filterTag"
-        prop="typeName"
-        label="类型"
-        filter-placement="bottom-end"
-        align="center">
-        <template slot-scope="scope">
-          <el-tag
-            :type="transferTag(scope)"
-            disable-transitions>{{ scope.row.typeName }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center">
+        prop="ispass"
+        label="是否通过"
+        align="center"
+        width="120"/>
+      <el-table-column
+        prop="fileEntityList.name"
+        label="审核文件列表"
+        align="center"
+        width="100"/>
+      <el-table-column
+        prop="description"
+        label="备注"
+        align="center"
+        width="100"/>
+      <el-table-column label="操作" align="center" width="200">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -93,18 +112,18 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"/>
     </div>
-    <addArticle v-if="addArticleVisible" ref="addArticle" :visible.sync="addArticleVisible" :title.sync="title" :operator.sync="opr" :article.sync="article" @closeMain="parentFn" />
-    <uploadFile v-if="uploadFileVisible" ref="uploadFile" :visible.sync="uploadFileVisible" :show-input.sync="showInput" @closeMain="parentFn" />
+    <!--<addArticle v-if="addArticleVisible" ref="addArticle" :visible.sync="addArticleVisible" :title.sync="title" :operator.sync="opr" :article.sync="article" @closeMain="parentFn" />-->
+    <!--<uploadFile v-if="uploadFileVisible" ref="uploadFile" :visible.sync="uploadFileVisible" :show-input.sync="showInput" @closeMain="parentFn" />-->
   </div>
 </template>
 
 <script>
 
-import addArticle from '../addArticle'
-import uploadFile from './uploadFile'
-import { getFileList, delFile, download } from '@/api/qiniu'
+// import addArticle from '../addArticle'
+// import uploadFile from './uploadFile'
+import { getAll } from '@/api/checkup'
 export default {
-  components: { addArticle, uploadFile },
+  // components: { addArticle, uploadFile },
   data() {
     return {
       tableData: [{
@@ -115,20 +134,18 @@ export default {
         tag: '家'
       }],
       options: [{
-        value: '2000',
-        label: '认证模板'
+        value: '00',
+        label: '未通过'
       }, {
-        value: '2001',
-        label: '必填模板'
-      }, {
-        value: '2002',
-        label: '其他模板'
+        value: '01',
+        label: '已通过'
       }],
       formInline: {
-        name: '',
-        uploadUser: '',
-        type: null,
-        uploadDate: ''
+        school: '',
+        creater: '',
+        phone: '',
+        identification: '',
+        ispass: ''
       },
       pickerOptions1: {
         disabledDate(time) {
@@ -178,66 +195,13 @@ export default {
   },
   methods: {
     handleEdit(index, row) {
-      const param = {
-        'id': row.id
-      }
-      return new Promise((resolve, reject) => {
-        download(param).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('下载文件失败!')
-          }
-          if (response.data.code === 200) {
-            window.open(response.data.data)
-            // window.location.href = response.data.data
-          } else {
-            this.$message.error(response.data.message)
-          }
-        }).catch(error => {
-          reject(error)
-        })
-      })
     },
     handleDelete(index, id) {
-      const param = {
-        'id': id
-      }
-      this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        return new Promise((resolve, reject) => {
-          delFile(param).then(response => {
-            if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-              reject('删除文件失败!')
-            }
-            if (response.data.code === 200) {
-              this.loadTableData(this.currentPage, this.pageSize, this.formInline.name, this.formInline.uploadUser, this.formInline.uploadDate, this.formInline.type)
-              this.$message({
-                type: 'success',
-                message: response.data.message
-              })
-            } else {
-              this.$message.error(response.data.message)
-            }
-          }).catch(error => {
-            reject(error)
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
     },
     onSubmit() {
       this.currentPage = 1
       this.pageSize = 10
       this.loadTableData(this.currentPage, this.pageSize, this.formInline.name, this.formInline.uploadUser, this.formInline.uploadDate, this.formInline.type)
-    },
-    filterTag(value, row) {
-      return row.typeName === value
     },
     handleSizeChange(val) {
       this.pageSize = val
@@ -255,21 +219,23 @@ export default {
       this.uploadFileVisible = true
       this.opr = 'add'
     },
-    loadTableData(currentPage, size, name, upload_user, upload_date, type) {
+    loadTableData(currentPage, size, creater, identification, phone, create_date, ispass) {
       const param = {
         'currentPage': currentPage,
         'pageSize': size,
-        'name': name,
-        'uploadUser': upload_user,
-        'uploadDate': upload_date,
-        'type': type
+        'creater': creater,
+        'identification': identification,
+        'phone': phone,
+        'createDate': create_date,
+        'ispass': ispass
       }
       return new Promise((resolve, reject) => {
-        getFileList(param).then(response => {
+        getAll(param).then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('获取文件列表失败!')
           }
           if (response.data.code === 200) {
+            console.log(response.data)
             this.tableData = response.data.tableData
             // alert(JSON.stringify(this.tableData))
             this.totalSize = response.data.total
