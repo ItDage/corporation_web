@@ -7,11 +7,12 @@ export function getToken() {
   })
 }
 
-export function upload(id, name, type) {
+export function upload(id, name, type, secondType) {
   const data = {
     'id': id,
     'name': name,
-    'type': type
+    'type': type,
+    'secondType': secondType
   }
   return request({
     url: '/upload/add',

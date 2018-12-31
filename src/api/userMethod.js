@@ -30,3 +30,11 @@ export function register(data) {
     data
   })
 }
+
+export function update(data) {
+  return request({
+    url: '/user/update',
+    method: 'post',
+    data
+  })
+}

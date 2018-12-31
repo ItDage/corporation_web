@@ -26,13 +26,13 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="onSubmit">{{ $t('i18nView.find') }}</el-button>
         </el-form-item>
+        <!--<el-form-item>-->
+          <!--<el-button type="success" @click="showForm('addArticle')">新增</el-button>-->
+        <!--</el-form-item>-->
         <el-form-item>
-          <el-button type="success" @click="showForm('addArticle')">新增</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="success" @click="uploadFileForm('addArticle')">新增模板</el-button>
+          <el-button type="success" @click="uploadFileForm('addArticle')">{{ $t('i18nView.add') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -74,11 +74,11 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="handleEdit(scope.$index, scope.row)">下载</el-button>
+            @click="handleEdit(scope.$index, scope.row)">{{ $t('i18nView.download') }}</el-button>
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row.id)">删除</el-button>
+            @click="handleDelete(scope.$index, scope.row.id)">{{ $t('i18nView.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -93,18 +93,20 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"/>
     </div>
-    <addArticle v-if="addArticleVisible" ref="addArticle" :visible.sync="addArticleVisible" :title.sync="title" :operator.sync="opr" :article.sync="article" @closeMain="parentFn" />
+    <!--<addArticle v-if="addArticleVisible" ref="addArticle" :visible.sync="addArticleVisible" :title.sync="title" :operator.sync="opr" :article.sync="article" @closeMain="parentFn" />-->
     <uploadFile v-if="uploadFileVisible" ref="uploadFile" :visible.sync="uploadFileVisible" :show-input.sync="showInput" @closeMain="parentFn" />
   </div>
 </template>
 
 <script>
 
-import addArticle from '../addArticle'
+// import addArticle from '../addArticle'
 import uploadFile from './uploadFile'
 import { getFileList, delFile, download } from '@/api/qiniu'
+import local from '@/views/i18n-demo/local'
+const viewName = 'i18nView'
 export default {
-  components: { addArticle, uploadFile },
+  components: { uploadFile },
   data() {
     return {
       tableData: [{
@@ -173,7 +175,23 @@ export default {
       }
     }
   },
+  computed: {
+    lang: {
+      get() {
+        return this.$store.state.app.language
+      },
+      set(lang) {
+        this.$i18n.locale = lang
+        this.$store.dispatch('setLanguage', lang)
+      }
+    }
+  },
   created() {
+    if (!this.$i18n.getLocaleMessage('en')[viewName]) {
+      this.$i18n.mergeLocaleMessage('en', local.en)
+      this.$i18n.mergeLocaleMessage('zh', local.zh)
+      this.$i18n.mergeLocaleMessage('es', local.es)
+    }
     this.loadTableData(this.currentPage, this.pageSize)
   },
   methods: {

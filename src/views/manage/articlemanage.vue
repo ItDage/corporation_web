@@ -2,22 +2,22 @@
   <div class="app-container">
     <div class="filter-container">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
-        <el-form-item label="标题">
-          <el-input v-model="formInline.title" placeholder="标题"/>
+        <el-form-item :label="$t('i18nView.title2')">
+          <el-input v-model="formInline.title" :placeholder="$t('tip.title2')"/>
         </el-form-item>
-        <el-form-item label="作者">
-          <el-input v-model="formInline.author" placeholder="作者"/>
+        <el-form-item :label="$t('i18nView.author')">
+          <el-input v-model="formInline.author" :placeholder="$t('tip.author')"/>
         </el-form-item>
-        <el-form-item label="发布时间">
+        <el-form-item :label="$t('i18nView.publishDate')">
           <el-date-picker
             v-model="formInline.publishDate"
             :picker-options="pickerOptions1"
+            :placeholder="$t('tip.date')"
             align="right"
-            type="date"
-            placeholder="选择日期"/>
+            type="date"/>
         </el-form-item>
-        <el-form-item label="文章类型">
-          <el-select v-model="formInline.type" filterable placeholder="文章类型" clearable>
+        <el-form-item :label="$t('i18nView.type')">
+          <el-select v-model="formInline.type" :placeholder="$t('tip.type')" filterable clearable>
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -26,10 +26,10 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="onSubmit">{{ $t('i18nView.find') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="success" @click="showForm('addArticle')">新增</el-button>
+          <el-button type="success" @click="showForm('addArticle')">{{ $t('i18nView.add') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -41,22 +41,22 @@
         align="center"
         width="65"/>
       <el-table-column
+        :label="$t('i18nView.title2')"
         prop="title"
-        label="标题"
         width="150px"/>
       <el-table-column
-        label="内容"
+        :label="$t('i18nView.content')"
         prop="subContent">
         <!--<template slot-scope="scope">-->
         <!--<div v-model="scope.row.subContent"> {{ scope.row.subContent }} </div>-->
         <!--</template>-->
       </el-table-column>
       <el-table-column
+        :label="$t('i18nView.author')"
         prop="author"
-        label="作者"
         align="center"/>
       <el-table-column
-        label="日期"
+        :label="$t('i18nView.publishDate')"
         align="center">
         <template slot-scope="scope">
           <i class="el-icon-time"/>
@@ -66,8 +66,8 @@
       <el-table-column
         :filters="[{ text: '公告', value: '公告' }, { text: '法律法规', value: '法律法规' }, { text: '新闻', value: '新闻' }, { text: '其他', value: '其他' }]"
         :filter-method="filterTag"
+        :label="$t('i18nView.type')"
         prop="typeName"
-        label="类型"
         filter-placement="bottom-end"
         align="center">
         <template slot-scope="scope">
@@ -76,15 +76,15 @@
             disable-transitions>{{ scope.row.typeName }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column :label="$t('i18nView.operate')" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="handleEdit(scope.$index, scope.row, 'addArticle')">编辑</el-button>
+            @click="handleEdit(scope.$index, scope.row, 'addArticle')">{{ $t('i18nView.edit') }}</el-button>
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row.id)">删除</el-button>
+            @click="handleDelete(scope.$index, scope.row.id)">{{ $t('i18nView.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -107,6 +107,8 @@
 
 import addArticle from './addArticle'
 import { getArticle, delArticle } from '@/api/article'
+import local from '@/views/i18n-demo/local'
+const viewName = 'i18nView'
 export default {
   components: { addArticle },
   data() {
@@ -180,7 +182,23 @@ export default {
       }
     }
   },
+  computed: {
+    lang: {
+      get() {
+        return this.$store.state.app.language
+      },
+      set(lang) {
+        this.$i18n.locale = lang
+        this.$store.dispatch('setLanguage', lang)
+      }
+    }
+  },
   created() {
+    if (!this.$i18n.getLocaleMessage('en')[viewName]) {
+      this.$i18n.mergeLocaleMessage('en', local.en)
+      this.$i18n.mergeLocaleMessage('zh', local.zh)
+      this.$i18n.mergeLocaleMessage('es', local.es)
+    }
     this.loadTableData(this.currentPage, this.pageSize)
   },
   methods: {

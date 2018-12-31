@@ -15,3 +15,19 @@ export function getAll(data) {
     data
   })
 }
+
+export function update(data) {
+  return request({
+    url: '/checkup/update',
+    method: 'post',
+    data
+  })
+}
+
+export function del(data) {
+  return request({
+    url: '/checkup/delete',
+    method: 'post',
+    data
+  })
+}

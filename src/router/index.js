@@ -71,7 +71,7 @@ export const constantRouterMap = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '主页', icon: 'dashboard', noCache: true }
+        meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
       }
     ]
   },
@@ -100,6 +100,31 @@ export const constantRouterMap = [
         meta: { title: 'guide', icon: 'guide', noCache: true }
       }
     ]
+  },
+  {
+    path: '/usercenter',
+    component: Layout,
+    redirect: '/usercenter/index',
+    alwaysShow: true, // will always show the root menu
+    meta: {
+      title: 'user',
+      icon: 'people',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'changeuserinfo',
+        component: () => import('@/views/usercenter/changeuserinfo'),
+        name: 'ChangeUserInfo',
+        meta: { title: 'changeuserinfo', icon: 'form', noCache: true }
+      },
+      {
+        path: 'changepassword',
+        component: () => import('@/views/usercenter/changepassword'),
+        name: 'ChangePassword',
+        meta: { title: 'changepassword', icon: 'password', noCache: true }
+      }
+    ]
   }
 ]
 
@@ -117,7 +142,7 @@ export const asyncRouterMap = [
     redirect: '/permission/index',
     alwaysShow: true, // will always show the root menu
     meta: {
-      title: '系统设置',
+      title: 'permission',
       icon: 'lock',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },

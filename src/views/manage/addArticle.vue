@@ -2,26 +2,26 @@
   <!-- 新增文章-->
   <el-dialog :visible.sync="visible" :title.sync="title" :article.sync="article" :operator.sync="operator" :before-close="refreshTab" center @opened="resetForm('form')">
     <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm">
-      <el-form-item :label-width="formLabelWidth" label="标题" prop="title">
-        <el-input v-model="form.title" autocomplete="off" placeholder="请输入标题"/>
+      <el-form-item :label-width="formLabelWidth" :label="$t('i18nView.title2')" prop="title">
+        <el-input v-model="form.title" :placeholder="$t('tip.title2')" autocomplete="off"/>
       </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="作者" prop="author">
-        <el-input v-model="form.author" autocomplete="off" placeholder="请输入作者"/>
+      <el-form-item :label-width="formLabelWidth" :label="$t('i18nView.author')" prop="author">
+        <el-input v-model="form.author" :placeholder="$t('tip.author')" autocomplete="off"/>
       </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="类型" prop="type">
-        <el-select v-model="form.type" placeholder="请选择文章类型">
-          <el-option label="公告" value="1000"/>
-          <el-option label="新闻" value="1001"/>
-          <el-option label="法律法规" value="1002"/>
-          <el-option label="其他" value="1003"/>
+      <el-form-item :label-width="formLabelWidth" :label="$t('i18nView.type')" prop="type">
+        <el-select v-model="form.type" :placeholder="$t('tip.type')">
+          <el-option :label="$t('i18nView.notice')" value="1000"/>
+          <el-option :label="$t('i18nView.news')" value="1001"/>
+          <el-option :label="$t('i18nView.legal')" value="1002"/>
+          <el-option :label="$t('i18nView.others')" value="1003"/>
         </el-select>
       </el-form-item>
     </el-form>
     <TinymceDemo ref="content" v-model="articleContent" :height="300"/>
     <div slot="footer" class="dialog-footer">
       <!--<el-button @click="visible = false">取 消</el-button>-->
-      <el-button @click="resetForm('form')">取 消</el-button>
-      <el-button type="primary" plain @click="submitForm('form')">确 定</el-button>
+      <el-button @click="resetForm('form')">{{ $t('i18nView.reset') }}</el-button>
+      <el-button type="primary" plain @click="submitForm('form')">{{ $t('i18nView.submit') }}</el-button>
     </div>
     <!--<span>{{ printArticle }}</span>-->
   </el-dialog>
@@ -29,6 +29,8 @@
 <script>
 import TinymceDemo from '@/components/Tinymce'
 import { add } from '@/api/article'
+import local from '@/views/i18n-demo/local'
+const viewName = 'i18nView'
 export default {
   components: { TinymceDemo },
   props: {
@@ -86,12 +88,25 @@ export default {
       opr: 'add'
     }
   },
-  // computed: {
-  //   printArticle: function() {
-  //     return JSON.stringify(this.articleContent)
-  //   }
-  // },
+  computed: {
+    lang: {
+      get() {
+        return this.$store.state.app.language
+      },
+      set(lang) {
+        this.$i18n.locale = lang
+        this.$store.dispatch('setLanguage', lang)
+      }
+    }
+  },
   watch: {
+  },
+  created() {
+    if (!this.$i18n.getLocaleMessage('en')[viewName]) {
+      this.$i18n.mergeLocaleMessage('en', local.en)
+      this.$i18n.mergeLocaleMessage('zh', local.zh)
+      this.$i18n.mergeLocaleMessage('es', local.es)
+    }
   },
   mounted() {
     this.opr = this.operator

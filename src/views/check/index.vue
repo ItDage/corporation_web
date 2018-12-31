@@ -16,8 +16,8 @@
       <el-form-item label="手机号" prop="phone">
         <el-input v-model="ruleForm.phone"/>
       </el-form-item>
-      <el-form-item label="备注" prop="desc">
-        <el-input v-model="ruleForm.desc" type="textarea"/>
+      <el-form-item label="备注" prop="description">
+        <el-input v-model="ruleForm.description" type="textarea"/>
       </el-form-item>
       <el-form-item label="审查文件">
         <el-upload
@@ -62,7 +62,7 @@ export default {
         school: '',
         identification: '',
         phone: '',
-        desc: ''
+        description: ''
       },
       dataObj: { token: '', key: '' },
       activeNames: ['1'],
@@ -78,7 +78,7 @@ export default {
         phone: [
           { required: true, trigger: 'blur', validator: validPhone }
         ],
-        desc: [
+        description: [
           { required: true, message: '请填写活动形式', trigger: 'blur' }
         ]
       }
@@ -119,24 +119,29 @@ export default {
     },
     beforeUpload(file) {
       const _self = this
-      return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.data.qiniu_key + file.name
-          const token = response.data.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          resolve(true)
-        }).catch(err => {
-          console.log(err)
-          reject(false)
-        })
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          return new Promise((resolve, reject) => {
+            getToken().then(response => {
+              const key = response.data.data.qiniu_key + file.name
+              const token = response.data.data.qiniu_token
+              _self._data.dataObj.token = token
+              _self._data.dataObj.key = key
+              resolve(true)
+            }).catch(err => {
+              console.log(err)
+              reject(false)
+            })
+          })
+        }
       })
     },
     uploadSuccess(response, file, fileList) {
       const id = response.key
       const name = file.name
+      const secondType = this.ruleForm.school
       return new Promise((resolve, reject) => {
-        upload(id, name, this.type).then(response => {
+        upload(id, name, this.type, secondType).then(response => {
           const code = response.data.code
           if (code === 200) {
             this.$notify({
