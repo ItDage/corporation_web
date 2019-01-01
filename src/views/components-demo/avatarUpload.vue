@@ -15,7 +15,7 @@
       :width="300"
       :height="300"
       :key="imagecropperKey"
-      url="https://httpbin.org/post"
+      url="//upload.qiniu.com"
       lang-type="en"
       @close="close"
       @crop-upload-success="cropSuccess"/>
@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     cropSuccess(resData) {
+      console.log(JSON.stringify(resData))
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
       this.image = resData.files.avatar

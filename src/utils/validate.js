@@ -40,3 +40,31 @@ export function validateEmail(email) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(email)
 }
+
+/**
+ * 验证手机号
+ */
+export function validPhone(rule, value, callback) {
+  const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+  if (!value) {
+    callback(new Error('请输入电话号码'))
+  } else if (!reg.test(value)) {
+    callback(new Error('手机号码格式不正确'))
+  } else {
+    callback()
+  }
+}
+/**
+ * 验证手机号--非必填
+ */
+export function validPhoneNotRequired(rule, value, callback) {
+  const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+  if (value == null || value === '') {
+    callback()
+  }
+  if (!reg.test(value)) {
+    callback(new Error('手机号码格式不正确'))
+  } else {
+    callback()
+  }
+}

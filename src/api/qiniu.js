@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 
-export function getToken() {
+export function getToken(data) {
   return request({
     url: '/upload/qiniu/token',
-    method: 'get'
+    method: 'post',
+    data
   })
 }
 

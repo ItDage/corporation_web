@@ -1,11 +1,8 @@
 <template>
-  <div>
-    <el-collapse v-model="activeNames" @change="handleChange">
-      <el-collapse-item title="说明" name="1">
-        <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-      </el-collapse-item>
-    </el-collapse>
+  <div class="app-container">
+    <code>
+      <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+    </code>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
       <el-form-item label="学校" prop="school">
         <el-input v-model="ruleForm.school"/>
@@ -43,17 +40,8 @@
 import uploadFile from '@/views/manage/template/uploadFile'
 import { delFile, getToken, upload } from '@/api/qiniu'
 import { add } from '@/api/checkup'
+import { validPhone } from '../../utils/validate'
 
-var validPhone = (rule, value, callback) => {
-  const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
-  if (!value) {
-    callback(new Error('请输入电话号码'))
-  } else if (!reg.test(value)) {
-    callback(new Error('请输入正确的11位手机号码'))
-  } else {
-    callback()
-  }
-};
 export default {
   components: { uploadFile },
   data() {

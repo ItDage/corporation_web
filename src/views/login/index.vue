@@ -76,7 +76,7 @@
             <el-option label="女" value="0"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="出生日期">
+        <el-form-item label="出生日期" prop="birth">
           <el-col :span="7">
             <el-date-picker v-model="registerForm.birth" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="选择日期" style="width: 94%;"/>
           </el-col>
@@ -186,6 +186,9 @@ export default {
         ],
         checkPass: [
           { required: true, validator: validatePass2, trigger: 'blur' }
+        ],
+        birth: [
+          { required: true, message: '请输入出生日期', trigger: 'change' }
         ]
       },
       loginRules: {

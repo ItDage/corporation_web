@@ -38,3 +38,11 @@ export function update(data) {
     data
   })
 }
+
+export function getUserInfo(data) {
+  return request({
+    url: '/user/getUserByEmail',
+    method: 'post',
+    data
+  })
+}

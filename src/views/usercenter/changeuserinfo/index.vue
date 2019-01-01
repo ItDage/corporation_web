@@ -1,6 +1,18 @@
 <template>
   <div class="app-container">
     <el-form ref="registerForm" :model="registerForm" :rules="rules" label-width="100px" class="demo-ruleForm">
+      <el-form-item>
+        <el-upload
+          :data="dataObj"
+          :show-file-list="false"
+          :before-upload="beforeAvatarUpload"
+          :on-success="handleAvatarSuccess"
+          class="avatar-uploader"
+          action="//upload.qiniu.com">
+          <img v-if="imageUrl" :src="imageUrl" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"/>
+        </el-upload>
+      </el-form-item>
       <el-form-item :label="$t('i18nView.username')" prop="username">
         <el-input v-model="registerForm.username" :placeholder="$t('tip.username')"/>
       </el-form-item>
@@ -10,18 +22,21 @@
           <el-option label="女" value="0"/>
         </el-select>
       </el-form-item>
+      <el-form-item :label="$t('i18nView.birth')" prop="birth">
+        <el-col :span="7">
+          <el-date-picker v-model="registerForm.birth" :placeholder="$t('tip.birth')" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" style="width: 94%;" @change="getSTime"/>
+        </el-col>
+        <el-col :span="2" class="line"/>
+        <el-col :span="11"/>
+      </el-form-item>
+      <el-form-item :label="$t('i18nView.school')" prop="school">
+        <el-input v-model="registerForm.school" :placeholder="$t('tip.school')"/>
+      </el-form-item>
       <el-form-item :label="$t('i18nView.phone')" prop="phone">
         <el-input v-model="registerForm.phone" :placeholder="$t('tip.phone')"/>
       </el-form-item>
       <el-form-item :label="$t('i18nView.identification')" prop="identification">
         <el-input v-model="registerForm.identification" :placeholder="$t('tip.identification')"/>
-      </el-form-item>
-      <el-form-item :label="$t('i18nView.birth')">
-        <el-col :span="7">
-          <el-date-picker v-model="registerForm.birth" :placeholder="$t('tip.birth')" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" style="width: 94%;"/>
-        </el-col>
-        <el-col :span="2" class="line"/>
-        <el-col :span="11"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('registerForm')">{{ $t('i18nView.submit') }}</el-button>
@@ -31,68 +46,45 @@
   </div>
 </template>
 <script>
-import { update } from '@/api/userMethod'
+import { update, getUserInfo } from '@/api/userMethod'
 import local from '@/views/i18n-demo/local'
+import { validPhoneNotRequired } from '../../../utils/validate'
+import { getToken, upload } from '@/api/qiniu' // 获取七牛token 后端通过Access Key,Secret Key,bucket等生成token
+
 const viewName = 'i18nView'
 export default {
+  components: { },
   data() {
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.ruleForm2.checkPass !== '') {
-          this.$refs.ruleForm2.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm2.password) {
-        callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
-      }
-    }
     return {
       registerForm: {
         username: '',
         gender: '',
         birth: '',
-        email: '',
-        validCode: '',
-        password: '',
-        checkPass: '',
-        commonType: ''
+        school: '',
+        phone: '',
+        identification: ''
       },
       rules: {
         username: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
           { min: 3, max: 8, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
-        email: [
-          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
-        ],
         gender: [
-          { required: true, message: '请选择性别', trigger: 'change' }
+          { required: true, message: '请选择性别', trigger: 'blur' }
         ],
-        commonType: [
-          { required: true, message: '请选择类型', trigger: 'change' }
+        birth: [
+          { required: true, message: '请输入出生日期', trigger: 'blur' }
         ],
-        validCode: [
-          { required: true, message: '请输入验证码', trigger: 'blur' },
-          { min: 4, max: 4, message: '长度 4 个字符', trigger: 'blur' }
+        phone: [
+          { required: false, trigger: 'blur', validator: validPhoneNotRequired }
         ],
-        password: [
-          { required: true, validator: validatePass, trigger: 'blur' },
-          { min: 6, message: '长度 6 个字符', trigger: 'blur' }
-        ],
-        checkPass: [
-          { required: true, validator: validatePass2, trigger: 'blur' }
+        identification: [
+          { min: 18, max: 18, message: '长度在 18 个字符', trigger: 'blur' }
         ]
-      }
+      },
+      imageUrl: '',
+      dataObj: { token: '', key: '' },
+      type: '2004'
     }
   },
   computed: {
@@ -112,13 +104,15 @@ export default {
       this.$i18n.mergeLocaleMessage('zh', local.zh)
       this.$i18n.mergeLocaleMessage('es', local.es)
     }
+    this.loadUserInfo()
+    this.imageUrl = this.$store.state.user.avatar
   },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           return new Promise((resolve, reject) => {
-            update(this.ruleForm2).then(response => {
+            update(this.registerForm).then(response => {
               if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
                 reject('获取文件列表失败!')
               }
@@ -143,7 +137,129 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+    },
+    loadUserInfo() {
+      return new Promise((resolve, reject) => {
+        getUserInfo().then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('获取用户信息失败!')
+          }
+          if (response.data.code === 200) {
+            this.registerForm = response.data.data
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    getSTime(val) {
+      this.registerForm.birth = val
+    },
+    handleAvatarSuccess(response, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+      const id = response.key
+      const name = file.name
+      const imageUrl = response.key
+      new Promise((resolve, reject) => {
+        // 更新文件
+        upload(id, name, this.type).then(response => {
+          const code = response.data.code
+          if (code === 200) {
+            const param = {
+              image: imageUrl
+            }
+            return new Promise((resolve, reject) => {
+              update(param).then(response => {
+                const code = response.data.code
+                if (code === 200) {
+                  this.$notify({
+                    title: response.data.message,
+                    message: name + response.data.message,
+                    type: 'success'
+                  })
+                } else {
+                  this.$notify.error({
+                    title: response.data.message,
+                    message: name + response.data.message
+                  })
+                }
+                resolve(true)
+              }).catch(err => {
+                console.log(err)
+                reject(false)
+              })
+            })
+          } else {
+            this.$notify.error({
+              title: response.data.message,
+              message: name + response.data.message
+            })
+          }
+          resolve(true)
+        }).catch(err => {
+          console.log(err)
+          reject(false)
+        })
+      })
+    },
+    beforeAvatarUpload(file) {
+      const _self = this
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      if (isJPG && isLt2M) {
+        const param = {
+          isPublic: '1'
+        }
+        return new Promise((resolve, reject) => {
+          getToken(param).then(response => {
+            const key = response.data.data.qiniu_key + file.name
+            const token = response.data.data.qiniu_token
+            _self._data.dataObj.token = token
+            _self._data.dataObj.key = key
+            resolve(true)
+          }).catch(err => {
+            console.log(err)
+            reject(false)
+          })
+        })
+      } else {
+        return false
+      }
     }
   }
 }
 </script>
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+</style>

@@ -41,7 +41,14 @@ export default {
       operate: '操作',
       edit: '编辑',
       delete: '删除',
-      download: '下载'
+      download: '下载',
+      register: '注册',
+      school: '学校',
+      avatar: '上传头像',
+      userList: '注册人数',
+      applyList: '资质申请',
+      noticeList: '通知列表',
+      templateList: '模板列表'
     },
     tip: {
       identification: '请输入身份证号',
@@ -55,7 +62,8 @@ export default {
       author: '请输入作者',
       type: '请输入类型',
       content: '请输入内容',
-      date: '请输入日期'
+      date: '请输入日期',
+      school: '请输入学校'
     }
   },
   en: {
@@ -99,7 +107,14 @@ export default {
       operate: 'operate',
       edit: 'edit',
       delete: 'delete',
-      download: 'download'
+      download: 'download',
+      register: 'register',
+      school: 'school',
+      avatar: 'upload',
+      userList: 'User List',
+      applyList: 'Apply List',
+      noticeList: 'Notice List',
+      templateList: 'Template List'
     },
     tip: {
       identification: 'please enter identification',
@@ -112,7 +127,8 @@ export default {
       title2: 'please enter title',
       author: 'please enter author',
       type: 'please enter type',
-      content: 'please enter content'
+      content: 'please enter content',
+      school: 'please enter school'
     }
   },
   es: {
@@ -156,7 +172,10 @@ export default {
       operate: 'operate',
       edit: 'edit',
       delete: 'delete',
-      download: 'download'
+      download: 'download',
+      register: 'register',
+      school: 'school',
+      avatar: 'upload'
     },
     tip: {
       identification: 'please enter identification',
@@ -169,7 +188,8 @@ export default {
       title2: 'please enter title',
       author: 'please enter author',
       type: 'please enter type',
-      content: 'please enter content'
+      content: 'please enter content',
+      school: 'please enter school'
     }
   }
 }
