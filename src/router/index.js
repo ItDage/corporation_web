@@ -144,7 +144,7 @@ export const asyncRouterMap = [
     meta: {
       title: 'permission',
       icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      roles: ['admin', 'common'] // you can set roles in root nav
     },
     children: [
       {

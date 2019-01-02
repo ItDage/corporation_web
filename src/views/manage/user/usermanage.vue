@@ -3,16 +3,16 @@
     <div class="filter-container">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
         <el-form-item :label="$t('i18nView.email')">
-          <el-input v-model="formInline.author" :placeholder="$t('tip.email')"/>
+          <el-input v-model="formInline.email" :placeholder="$t('tip.email')"/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.username')">
           <el-input v-model="formInline.username" :placeholder="$t('tip.username')"/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.identification')">
-          <el-input v-model="formInline.author" :placeholder="$t('tip.identification')"/>
+          <el-input v-model="formInline.identification" :placeholder="$t('tip.identification')"/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.school')">
-          <el-input v-model="formInline.author" :placeholder="$t('tip.school')"/>
+          <el-input v-model="formInline.school" :placeholder="$t('tip.school')"/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">{{ $t('i18nView.find') }}</el-button>
@@ -60,6 +60,21 @@
           <span style="margin-left: 10px">{{ scope.row.birth }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="valid"
+        label="是否通过"
+        align="center"
+        width="120">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.valid"
+            active-text="是"
+            active-value="1"
+            inactive-text="否"
+            inactive-value="0"
+            @change="updatePassStatus($event, scope.row.id)"/>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('i18nView.operate')" align="center">
         <template slot-scope="scope">
           <el-button
@@ -90,7 +105,7 @@
 <script>
 
 import addArticle from './addArticle'
-import { getAllUserByParam } from '@/api/userMethod'
+import { getAllUserByParam, delUser } from '@/api/userMethod'
 import local from '@/views/i18n-demo/local'
 const viewName = 'i18nView'
 export default {
@@ -121,7 +136,8 @@ export default {
         email: '',
         username: '',
         identification: null,
-        school: ''
+        school: '',
+        valid: 1
       },
       pickerOptions1: {
         disabledDate(time) {
@@ -200,13 +216,13 @@ export default {
       const param = {
         'id': id
       }
-      this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         return new Promise((resolve, reject) => {
-          delArticle(param).then(response => {
+          delUser(param).then(response => {
             if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
               reject('删除文章失败!')
             }
@@ -233,7 +249,7 @@ export default {
     onSubmit() {
       this.currentPage = 1
       this.pageSize = 10
-      this.loadTableData(this.currentPage, this.pageSize, this.formInline.title, this.formInline.author, this.formInline.publishDate, this.formInline.type)
+      this.loadTableData(this.currentPage, this.pageSize, this.formInline.email, this.formInline.username, this.formInline.identification, this.formInline.school)
     },
     filterTag(value, row) {
       return row.typeName === value
@@ -301,6 +317,9 @@ export default {
       if (data) {
         this.refreshTab()
       }
+    },
+    updatePassStatus(nval, id) {
+
     }
   }
 }

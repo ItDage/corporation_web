@@ -54,3 +54,11 @@ export function getAllUserByParam(data) {
     data
   })
 }
+
+export function delUser(data) {
+  return request({
+    url: '/user/delete',
+    method: 'post',
+    data
+  })
+}
