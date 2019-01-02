@@ -14,6 +14,7 @@ export default {
     checked: '资质审查',
     noticeManage: '通知管理',
     templateManage: '模板管理',
+    userManage: '用户管理',
     user: '个人中心',
     components: '组件',
     componentIndex: '介绍',

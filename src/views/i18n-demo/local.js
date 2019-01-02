@@ -48,7 +48,8 @@ export default {
       userList: '注册人数',
       applyList: '资质申请',
       noticeList: '通知列表',
-      templateList: '模板列表'
+      templateList: '模板列表',
+      email: '邮箱'
     },
     tip: {
       identification: '请输入身份证号',
@@ -63,7 +64,8 @@ export default {
       type: '请输入类型',
       content: '请输入内容',
       date: '请输入日期',
-      school: '请输入学校'
+      school: '请输入学校',
+      email: '请输入邮箱'
     }
   },
   en: {
@@ -114,7 +116,8 @@ export default {
       userList: 'User List',
       applyList: 'Apply List',
       noticeList: 'Notice List',
-      templateList: 'Template List'
+      templateList: 'Template List',
+      email: 'email'
     },
     tip: {
       identification: 'please enter identification',
@@ -128,7 +131,8 @@ export default {
       author: 'please enter author',
       type: 'please enter type',
       content: 'please enter content',
-      school: 'please enter school'
+      school: 'please enter school',
+      email: 'please enter email'
     }
   },
   es: {
@@ -175,7 +179,8 @@ export default {
       download: 'download',
       register: 'register',
       school: 'school',
-      avatar: 'upload'
+      avatar: 'upload',
+      email: 'email'
     },
     tip: {
       identification: 'please enter identification',
@@ -189,7 +194,8 @@ export default {
       author: 'please enter author',
       type: 'please enter type',
       content: 'please enter content',
-      school: 'please enter school'
+      school: 'please enter school',
+      email: 'please enter email'
     }
   }
 }

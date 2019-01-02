@@ -46,3 +46,11 @@ export function getUserInfo(data) {
     data
   })
 }
+
+export function getAllUserByParam(data) {
+  return request({
+    url: '/user/getAllUserByParam',
+    method: 'post',
+    data
+  })
+}

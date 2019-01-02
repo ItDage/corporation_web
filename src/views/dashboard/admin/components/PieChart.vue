@@ -6,7 +6,6 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import { debounce } from '@/utils'
-import { getGenderStatistics } from '@/api/statistics'
 
 export default {
   props: {
@@ -25,15 +24,15 @@ export default {
   },
   data() {
     return {
-      chart: null,
-      data: null
+      chart: null
     }
   },
   created() {
-    this.getData()
+
   },
   mounted() {
-    // this.initChart()
+    // this.loadData()
+    this.initChart()
     this.__resizeHandler = debounce(() => {
       if (this.chart) {
         this.chart.resize()
@@ -64,7 +63,7 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: this.data.name
+          data: this.$store.state.statistics.genderStatistics.name
         },
         calculable: true,
         series: [
@@ -73,30 +72,21 @@ export default {
             type: 'pie',
             radius: '55%',
             center: ['50%', '38%'],
-            data: this.data,
+            data: this.$store.state.statistics.genderStatistics,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
         ]
       })
     },
-    getData() {
-      return new Promise((resolve, reject) => {
-        getGenderStatistics().then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('获取文章列表失败!')
-          }
-          if (response.data.code === 200) {
-            console.log(JSON.stringify(response.data))
-            this.data = response.data.data
-            this.initChart()
-          } else {
-            this.$message.error(response.data.message)
-          }
-        }).catch(error => {
-          reject(error)
+    loadData() {
+      alert(JSON.stringify(this.$store.state.statistics.genderStatistics))
+      if (this.$store.state.statistics.genderStatistics == null) {
+        this.$store.dispatch('getStatistic').then(res => {
+        }).catch((err) => {
+          console.log(err)
         })
-      })
+      }
     }
   }
 }

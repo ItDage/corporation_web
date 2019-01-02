@@ -182,6 +182,15 @@ export const asyncRouterMap = [
           title: 'templateManage'
           // if do not set roles, means: this page does not require permission
         }
+      },
+      {
+        path: 'userManage',
+        component: () => import('@/views/manage/user/usermanage'),
+        name: 'UserManage',
+        meta: {
+          title: 'userManage'
+          // if do not set roles, means: this page does not require permission
+        }
       }
     ]
   },

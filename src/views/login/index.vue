@@ -231,7 +231,14 @@ export default {
           this.loading = true
           this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
             this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+            if (this.$store.state.statistics.genderStatistics == null) {
+              this.$store.dispatch('getStatistic').then(res => {
+                this.$router.push({ path: this.redirect || '/' })
+              }).catch((err) => {
+                console.log(err)
+              })
+            }
+
           }).catch(() => {
             this.loading = false
           })

@@ -109,10 +109,17 @@ export default {
       this.$i18n.mergeLocaleMessage('zh', local.zh)
       this.$i18n.mergeLocaleMessage('es', local.es)
     }
+    this.loadStatisticData()
   },
   methods: {
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
+    },
+    loadStatisticData() {
+      this.$store.dispatch('getStatistic').then(res => {
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 }
