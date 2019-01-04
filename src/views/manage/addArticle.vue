@@ -131,7 +131,6 @@ export default {
       this.$refs[formName].resetFields()
     },
     submitForm(formName) {
-      alert(JSON.stringify(this.form))
       this.$refs[formName].validate((valid) => {
         var content = this.articleContent
         if (valid) {

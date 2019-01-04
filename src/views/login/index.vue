@@ -238,7 +238,6 @@ export default {
                 console.log(err)
               })
             }
-
           }).catch(() => {
             this.loading = false
           })

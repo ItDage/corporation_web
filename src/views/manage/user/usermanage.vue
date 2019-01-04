@@ -20,6 +20,9 @@
         <el-form-item>
           <el-button type="success" @click="showForm('addArticle')">{{ $t('i18nView.add') }}</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button :loading="downloadLoading" type="info" icon="document" @click="handleDownload">{{ $t('excel.export') }} Excel</el-button>
+        </el-form-item>
       </el-form>
     </div>
     <el-table
@@ -36,9 +39,6 @@
       <el-table-column
         :label="$t('i18nView.username')"
         prop="username">
-        <!--<template slot-scope="scope">-->
-        <!--<div v-model="scope.row.subContent"> {{ scope.row.subContent }} </div>-->
-        <!--</template>-->
       </el-table-column>
       <el-table-column
         :label="$t('i18nView.identification')"
@@ -107,6 +107,7 @@
 import addArticle from './addArticle'
 import { getAllUserByParam, delUser } from '@/api/userMethod'
 import local from '@/views/i18n-demo/local'
+import { parseTime } from '@/utils'
 const viewName = 'i18nView'
 export default {
   components: { addArticle },
@@ -172,6 +173,7 @@ export default {
       pageSize: 10,
       title: '新增文章',
       tableRefresh: false,
+      downloadLoading: false,
       opr: 'add',
       article: {
         id: 1,
@@ -281,7 +283,7 @@ export default {
             reject('获取文章列表失败!')
           }
           if (response.data.code === 200) {
-            console.log(JSON.stringify(response.data))
+            // console.log(JSON.stringify(response.data))
             this.tableData = response.data.tableData
             // alert(JSON.stringify(this.tableData))
             this.totalSize = response.data.total
@@ -320,6 +322,32 @@ export default {
     },
     updatePassStatus(nval, id) {
 
+    },
+    handleDownload() {
+      this.downloadLoading = true
+    import('@/vendor/Export2Excel').then(excel => {
+      const tHeader = ['邮箱', '姓名', '身份证', '手机号', '学校', '出生日期', '是否通过']
+      const filterVal = ['email', 'username', 'identification', 'phone', 'school', 'birth', 'valid']
+      const list = this.tableData
+      const data = this.formatJson(filterVal, list)
+      excel.export_json_to_excel({
+        header: tHeader,
+        data,
+        filename: '用户信息',
+        autoWidth: true,
+        bookType: 'xlsx'
+      })
+      this.downloadLoading = false
+    })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
     }
   }
 }

@@ -49,7 +49,11 @@ export default {
       applyList: '资质申请',
       noticeList: '通知列表',
       templateList: '模板列表',
-      email: '邮箱'
+      email: '邮箱',
+      checkFile: '审查文件',
+      description: '备注',
+      corporation: '社团名称',
+      corporationDesc: '社团描述'
     },
     tip: {
       identification: '请输入身份证号',
@@ -65,7 +69,10 @@ export default {
       content: '请输入内容',
       date: '请输入日期',
       school: '请输入学校',
-      email: '请输入邮箱'
+      email: '请输入邮箱',
+      corporation: '请输入社团名称',
+      description: '请输入备注',
+      corporationDesc: '请输入社团描述'
     }
   },
   en: {
@@ -117,7 +124,11 @@ export default {
       applyList: 'Apply List',
       noticeList: 'Notice List',
       templateList: 'Template List',
-      email: 'email'
+      email: 'email',
+      checkFile: 'check file',
+      description: 'description',
+      corporationDesc: 'corporation desc',
+      corporation: 'corporation'
     },
     tip: {
       identification: 'please enter identification',
@@ -132,7 +143,10 @@ export default {
       type: 'please enter type',
       content: 'please enter content',
       school: 'please enter school',
-      email: 'please enter email'
+      email: 'please enter email',
+      corporation: 'please enter corporation name',
+      description: 'please enter remark',
+      corporationDesc: 'please enter corporation description'
     }
   },
   es: {

@@ -168,7 +168,7 @@ export default {
       dialogFormVisible: false,
       currentPage: 1,
       value2: '',
-      totalSize: 400,
+      totalSize: 0,
       pageSize: 10,
       title: '新增文章',
       tableRefresh: false,

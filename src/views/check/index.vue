@@ -4,19 +4,25 @@
       <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
     </code>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
-      <el-form-item label="学校" prop="school">
-        <el-input v-model="ruleForm.school"/>
+      <el-form-item :label="$t('i18nView.school')" prop="school">
+        <el-input v-model="ruleForm.school" :placeholder="$t('tip.school')"/>
       </el-form-item>
-      <el-form-item label="身份证号" prop="identification">
-        <el-input v-model="ruleForm.identification"/>
+      <el-form-item :label="$t('i18nView.identification')" prop="identification">
+        <el-input v-model="ruleForm.identification" :placeholder="$t('tip.identification')"/>
       </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="ruleForm.phone"/>
+      <el-form-item :label="$t('i18nView.phone')" prop="phone">
+        <el-input v-model="ruleForm.phone" :placeholder="$t('tip.phone')"/>
       </el-form-item>
-      <el-form-item label="备注" prop="description">
-        <el-input v-model="ruleForm.description" type="textarea"/>
+      <el-form-item :label="$t('i18nView.corporation')" prop="corporation">
+        <el-input v-model="ruleForm.corporation" :placeholder="$t('tip.corporation')"/>
       </el-form-item>
-      <el-form-item label="审查文件">
+      <el-form-item :label="$t('i18nView.corporationDesc')" prop="corporationDesc">
+        <el-input v-model="ruleForm.corporationDesc" :placeholder="$t('tip.corporationDesc')"/>
+      </el-form-item>
+      <el-form-item :label="$t('i18nView.description')" prop="description">
+        <el-input v-model="ruleForm.description" :placeholder="$t('tip.description')" type="textarea"/>
+      </el-form-item>
+      <el-form-item :label="$t('i18nView.checkFile')">
         <el-upload
           :data="dataObj"
           :before-upload="beforeUpload"
@@ -30,8 +36,8 @@
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">确认</el-button>
-        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">{{ $t('i18nView.submit') }}</el-button>
+        <el-button @click="resetForm('ruleForm')">{{ $t('i18nView.reset') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -41,6 +47,8 @@ import uploadFile from '@/views/manage/template/uploadFile'
 import { delFile, getToken, upload } from '@/api/qiniu'
 import { add } from '@/api/checkup'
 import { validPhone } from '../../utils/validate'
+import local from '@/views/i18n-demo/local'
+const viewName = 'i18nView'
 
 export default {
   components: { uploadFile },
@@ -50,11 +58,14 @@ export default {
         school: '',
         identification: '',
         phone: '',
-        description: ''
+        description: '',
+        corporation: '',
+        corporationDesc: ''
       },
       dataObj: { token: '', key: '' },
       activeNames: ['1'],
       type: '2003',
+     // fileList: [{ name: 'test', url: 'tet', response: { key: '1' }}],
       rules: {
         school: [
           { required: true, message: '请输入申请学校名称', trigger: 'blur' }
@@ -68,8 +79,31 @@ export default {
         ],
         description: [
           { required: true, message: '请填写活动形式', trigger: 'blur' }
+        ],
+        corporation: [
+          { required: true, message: '请输入社团名称', trigger: 'blur' }
+        ],
+        corporationDesc: [
+          { required: true, message: '请输入社团描述', trigger: 'blur' }
         ]
       }
+    }
+  },
+  computed: {
+    lang: {
+      get() {
+        return this.$store.state.app.language
+      },
+      set(lang) {
+        this.$i18n.locale = lang
+        this.$store.dispatch('setLanguage', lang)
+      }
+    }
+  },
+  created() {
+    if (!this.$i18n.getLocaleMessage('en')[viewName]) {
+      this.$i18n.mergeLocaleMessage('en', local.en)
+      this.$i18n.mergeLocaleMessage('zh', local.zh)
     }
   },
   methods: {
@@ -151,6 +185,7 @@ export default {
       })
     },
     del(file, fileList) {
+      console.log(JSON.stringify(file))
       const param = {
         'id': file.response.key
       }

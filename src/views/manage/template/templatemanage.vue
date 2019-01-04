@@ -28,11 +28,11 @@
         <el-form-item>
           <el-button type="primary" @click="onSubmit">{{ $t('i18nView.find') }}</el-button>
         </el-form-item>
-        <!--<el-form-item>-->
-          <!--<el-button type="success" @click="showForm('addArticle')">新增</el-button>-->
-        <!--</el-form-item>-->
         <el-form-item>
           <el-button type="success" @click="uploadFileForm('addArticle')">{{ $t('i18nView.add') }}</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button :loading="downloadLoading" type="info" icon="document" @click="handleDownload">{{ $t('excel.export') }} Excel</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -104,6 +104,7 @@
 import uploadFile from './uploadFile'
 import { getFileList, delFile, download } from '@/api/qiniu'
 import local from '@/views/i18n-demo/local'
+import { parseTime } from '@/utils'
 const viewName = 'i18nView'
 export default {
   components: { uploadFile },
@@ -166,6 +167,7 @@ export default {
       title: '新增文章',
       opr: 'add',
       showInput: true,
+      downloadLoading: false,
       article: {
         id: 1,
         title: null,
@@ -324,6 +326,32 @@ export default {
       if (data) {
         this.refreshTab()
       }
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['文件名', '上传者', '日期', '类型']
+        const filterVal = ['name', 'uploadUser', 'uploadDate', 'typeName']
+        const list = this.tableData
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: '上传模板Excel',
+          autoWidth: true,
+          bookType: 'xlsx'
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
     }
   }
 }

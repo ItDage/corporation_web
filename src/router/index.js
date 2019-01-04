@@ -170,7 +170,10 @@ export const asyncRouterMap = [
         component: () => import('@/views/manage/articlemanage'),
         name: 'NoticeManage',
         meta: {
-          title: 'noticeManage'
+          title: 'noticeManage',
+          icon: 'excel',
+          noCache: true,
+          roles: ['admin', 'common']
           // if do not set roles, means: this page does not require permission
         }
       },
@@ -179,7 +182,10 @@ export const asyncRouterMap = [
         component: () => import('@/views/manage/template/templatemanage'),
         name: 'TemlateManage',
         meta: {
-          title: 'templateManage'
+          title: 'templateManage',
+          icon: 'documentation',
+          noCache: true,
+          roles: ['admin', 'common']
           // if do not set roles, means: this page does not require permission
         }
       },
@@ -188,7 +194,10 @@ export const asyncRouterMap = [
         component: () => import('@/views/manage/user/usermanage'),
         name: 'UserManage',
         meta: {
-          title: 'userManage'
+          title: 'userManage',
+          icon: 'peoples',
+          noCache: true,
+          roles: ['admin', 'common']
           // if do not set roles, means: this page does not require permission
         }
       }
@@ -214,6 +223,7 @@ export const asyncRouterMap = [
   {
     path: '/checked',
     component: Layout,
+    meta: { title: 'icons', icon: 'icon', noCache: true, roles: ['admin'] },
     children: [
       {
         path: 'index',
