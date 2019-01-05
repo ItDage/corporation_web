@@ -3,16 +3,18 @@
     <div class="filter-container">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
         <el-form-item :label="$t('i18nView.title2')">
-          <el-input v-model="formInline.title" :placeholder="$t('tip.title2')"/>
+          <el-input v-model="formInline.title" :placeholder="$t('tip.title2')" clearable/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.author')">
-          <el-input v-model="formInline.author" :placeholder="$t('tip.author')"/>
+          <el-input v-model="formInline.author" :placeholder="$t('tip.author')" clearable/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.publishDate')">
           <el-date-picker
             v-model="formInline.publishDate"
             :picker-options="pickerOptions1"
             :placeholder="$t('tip.date')"
+            format="yyyy 年 MM 月 dd 日"
+            value-format="yyyy-MM-dd"
             align="right"
             type="date"/>
         </el-form-item>
@@ -64,8 +66,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        :filters="[{ text: '公告', value: '公告' }, { text: '法律法规', value: '法律法规' }, { text: '新闻', value: '新闻' }, { text: '其他', value: '其他' }]"
-        :filter-method="filterTag"
         :label="$t('i18nView.type')"
         prop="typeName"
         filter-placement="bottom-end"
@@ -108,6 +108,7 @@
 import addArticle from './addArticle'
 import { getArticle, delArticle } from '@/api/article'
 import local from '@/views/i18n-demo/local'
+import { mapGetters } from 'vuex'
 const viewName = 'i18nView'
 export default {
   components: { addArticle },
@@ -120,24 +121,12 @@ export default {
         address: '上海市普陀区金沙江路 1518 弄',
         tag: '家'
       }],
-      options: [{
-        value: '1000',
-        label: '公告'
-      }, {
-        value: '1001',
-        label: '新闻'
-      }, {
-        value: '1002',
-        label: '法律法规'
-      }, {
-        value: '1003',
-        label: '其他'
-      }],
+      options: [],
       formInline: {
         title: '',
         author: '',
         type: null,
-        publishDate: ''
+        publishDate: null
       },
       pickerOptions1: {
         disabledDate(time) {
@@ -191,13 +180,46 @@ export default {
         this.$i18n.locale = lang
         this.$store.dispatch('setLanguage', lang)
       }
-    }
+    },
+    ...mapGetters([
+      'roles'
+    ])
   },
   created() {
     if (!this.$i18n.getLocaleMessage('en')[viewName]) {
       this.$i18n.mergeLocaleMessage('en', local.en)
       this.$i18n.mergeLocaleMessage('zh', local.zh)
       this.$i18n.mergeLocaleMessage('es', local.es)
+    }
+    // 超管和社团管理员发布的文章类型不同
+    if (this.roles.includes('admin')) {
+      this.options = [{
+        value: '1000',
+        label: '公告'
+      }, {
+        value: '1001',
+        label: '新闻'
+      }, {
+        value: '1002',
+        label: '法律法规'
+      }, {
+        value: '1003',
+        label: '其他'
+      }]
+    } else {
+      this.options = [{
+        value: '1100',
+        label: '公告'
+      }, {
+        value: '1101',
+        label: '新闻'
+      }, {
+        value: '1102',
+        label: '活动'
+      }, {
+        value: '1103',
+        label: '章程'
+      }]
     }
     this.loadTableData(this.currentPage, this.pageSize)
   },

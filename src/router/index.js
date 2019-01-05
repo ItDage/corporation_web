@@ -140,11 +140,11 @@ export const asyncRouterMap = [
     path: '/permission',
     component: Layout,
     redirect: '/permission/index',
-    alwaysShow: true, // will always show the root menu
+    // alwaysShow: true, // will always show the root menu
     meta: {
       title: 'permission',
       icon: 'lock',
-      roles: ['admin', 'common'] // you can set roles in root nav
+      roles: ['admin', 'corporation_admin'] // you can set roles in root nav
     },
     children: [
       {
@@ -173,7 +173,7 @@ export const asyncRouterMap = [
           title: 'noticeManage',
           icon: 'excel',
           noCache: true,
-          roles: ['admin', 'common']
+          roles: ['admin', 'corporation_admin']
           // if do not set roles, means: this page does not require permission
         }
       },
@@ -185,7 +185,7 @@ export const asyncRouterMap = [
           title: 'templateManage',
           icon: 'documentation',
           noCache: true,
-          roles: ['admin', 'common']
+          roles: ['admin', 'corporation_admin']
           // if do not set roles, means: this page does not require permission
         }
       },
@@ -197,7 +197,7 @@ export const asyncRouterMap = [
           title: 'userManage',
           icon: 'peoples',
           noCache: true,
-          roles: ['admin', 'common']
+          roles: ['admin', 'corporation_admin']
           // if do not set roles, means: this page does not require permission
         }
       }
@@ -215,7 +215,7 @@ export const asyncRouterMap = [
           title: 'check',
           icon: 'edit',
           noCache: true,
-          roles: ['common']
+          roles: ['corporation_admin', 'student', 'common']
         }
       }
     ]
@@ -223,7 +223,7 @@ export const asyncRouterMap = [
   {
     path: '/checked',
     component: Layout,
-    meta: { title: 'icons', icon: 'icon', noCache: true, roles: ['admin'] },
+    meta: { title: 'icons', icon: 'icon', noCache: true, roles: ['admin', 'corporation_admin'] },
     children: [
       {
         path: 'index',
@@ -233,7 +233,7 @@ export const asyncRouterMap = [
           title: 'checked',
           icon: 'edit',
           noCache: true,
-          roles: ['admin']
+          roles: ['admin', 'corporation_admin']
         }
       }
     ]

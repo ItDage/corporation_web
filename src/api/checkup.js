@@ -31,3 +31,11 @@ export function del(data) {
     data
   })
 }
+
+export function getValidCorBySchool() {
+  return request({
+    url: '/checkup/getValidCorBySchool',
+    method: 'post'
+  })
+}
+

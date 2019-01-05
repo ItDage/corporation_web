@@ -3,15 +3,17 @@
     <div class="filter-container">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
         <el-form-item label="文件名">
-          <el-input v-model="formInline.name" placeholder="文件名"/>
+          <el-input v-model="formInline.name" placeholder="文件名" clearable/>
         </el-form-item>
         <el-form-item label="上传者">
-          <el-input v-model="formInline.uploadUser" placeholder="上传者"/>
+          <el-input v-model="formInline.uploadUser" placeholder="上传者" clearable/>
         </el-form-item>
         <el-form-item label="上传时间">
           <el-date-picker
             v-model="formInline.uploadDate"
             :picker-options="pickerOptions1"
+            format="yyyy 年 MM 月 dd 日"
+            value-format="yyyy-MM-dd"
             align="right"
             type="date"
             placeholder="选择日期"/>
@@ -131,7 +133,7 @@ export default {
         name: '',
         uploadUser: '',
         type: null,
-        uploadDate: ''
+        uploadDate: null
       },
       pickerOptions1: {
         disabledDate(time) {

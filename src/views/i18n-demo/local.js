@@ -53,7 +53,13 @@ export default {
       checkFile: '审查文件',
       description: '备注',
       corporation: '社团名称',
-      corporationDesc: '社团描述'
+      corporationDesc: '社团描述',
+      validCode: '验证码',
+      send: '发送验证码',
+      isValid: '是否有效',
+      role: '角色',
+      activity: '活动',
+      chapter: '章程'
     },
     tip: {
       identification: '请输入身份证号',
@@ -72,7 +78,8 @@ export default {
       email: '请输入邮箱',
       corporation: '请输入社团名称',
       description: '请输入备注',
-      corporationDesc: '请输入社团描述'
+      corporationDesc: '请输入社团描述',
+      validCode: '请输入验证码'
     }
   },
   en: {
@@ -128,7 +135,13 @@ export default {
       checkFile: 'check file',
       description: 'description',
       corporationDesc: 'corporation desc',
-      corporation: 'corporation'
+      corporation: 'corporation',
+      validCode: 'validCode',
+      send: 'send',
+      isValid: 'isValid',
+      role: 'role',
+      activity: 'activity',
+      chapter: 'chapter'
     },
     tip: {
       identification: 'please enter identification',
@@ -146,7 +159,8 @@ export default {
       email: 'please enter email',
       corporation: 'please enter corporation name',
       description: 'please enter remark',
-      corporationDesc: 'please enter corporation description'
+      corporationDesc: 'please enter corporation description',
+      validCode: 'please enter valid code'
     }
   },
   es: {

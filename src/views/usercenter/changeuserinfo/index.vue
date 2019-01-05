@@ -24,7 +24,7 @@
       </el-form-item>
       <el-form-item :label="$t('i18nView.birth')" prop="birth">
         <el-col :span="7">
-          <el-date-picker v-model="registerForm.birth" :placeholder="$t('tip.birth')" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" style="width: 94%;" @change="getSTime"/>
+          <el-date-picker v-model="registerForm.birth" :placeholder="$t('tip.birth')" value-format="yyyy-MM-dd" type="date" style="width: 94%;" @change="getSTime"/>
         </el-col>
         <el-col :span="2" class="line"/>
         <el-col :span="11"/>
@@ -67,13 +67,16 @@ export default {
       rules: {
         username: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 3, max: 8, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 1, max: 8, message: '长度在 1 到 8 个字符', trigger: 'blur' }
         ],
         gender: [
           { required: true, message: '请选择性别', trigger: 'blur' }
         ],
+        school: [
+          { required: true, message: '请输入学校', trigger: 'blur' }
+        ],
         birth: [
-          { required: true, message: '请输入出生日期', trigger: 'blur' }
+          { required: true, message: '请输入出生日期', trigger: 'change' }
         ],
         phone: [
           { required: false, trigger: 'blur', validator: validPhoneNotRequired }

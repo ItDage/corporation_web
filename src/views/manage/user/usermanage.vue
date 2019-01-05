@@ -3,16 +3,16 @@
     <div class="filter-container">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
         <el-form-item :label="$t('i18nView.email')">
-          <el-input v-model="formInline.email" :placeholder="$t('tip.email')"/>
+          <el-input v-model="formInline.email" :placeholder="$t('tip.email')" clearable/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.username')">
-          <el-input v-model="formInline.username" :placeholder="$t('tip.username')"/>
+          <el-input v-model="formInline.username" :placeholder="$t('tip.username')" clearable/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.identification')">
-          <el-input v-model="formInline.identification" :placeholder="$t('tip.identification')"/>
+          <el-input v-model="formInline.identification" :placeholder="$t('tip.identification')" clearable/>
         </el-form-item>
         <el-form-item :label="$t('i18nView.school')">
-          <el-input v-model="formInline.school" :placeholder="$t('tip.school')"/>
+          <el-input v-model="formInline.school" :placeholder="$t('tip.school')" clearable/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">{{ $t('i18nView.find') }}</el-button>
@@ -38,8 +38,7 @@
         width="150px"/>
       <el-table-column
         :label="$t('i18nView.username')"
-        prop="username">
-      </el-table-column>
+        prop="username"/>
       <el-table-column
         :label="$t('i18nView.identification')"
         prop="identification"
@@ -53,6 +52,10 @@
         prop="school"
         align="center"/>
       <el-table-column
+        :label="$t('i18nView.role')"
+        prop="roleDesc"
+        align="center"/>
+      <el-table-column
         :label="$t('i18nView.birth')"
         align="center">
         <template slot-scope="scope">
@@ -61,8 +64,8 @@
         </template>
       </el-table-column>
       <el-table-column
+        :label="$t('i18nView.isValid')"
         prop="valid"
-        label="是否通过"
         align="center"
         width="120">
         <template slot-scope="scope">
@@ -72,7 +75,7 @@
             active-value="1"
             inactive-text="否"
             inactive-value="0"
-            @change="updatePassStatus($event, scope.row.id)"/>
+            @change="updatePassStatus($event, scope.row.email)"/>
         </template>
       </el-table-column>
       <el-table-column :label="$t('i18nView.operate')" align="center">
@@ -83,7 +86,7 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row.id)">{{ $t('i18nView.delete') }}</el-button>
+            @click="handleDelete(scope.$index, scope.row.email)">{{ $t('i18nView.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,7 +108,7 @@
 <script>
 
 import addArticle from './addArticle'
-import { getAllUserByParam, delUser } from '@/api/userMethod'
+import { getAllUserByParam, delUser, update } from '@/api/userMethod'
 import local from '@/views/i18n-demo/local'
 import { parseTime } from '@/utils'
 const viewName = 'i18nView'
@@ -216,7 +219,7 @@ export default {
     },
     handleDelete(index, id) {
       const param = {
-        'id': id
+        'email': id
       }
       this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -283,10 +286,9 @@ export default {
             reject('获取文章列表失败!')
           }
           if (response.data.code === 200) {
-            // console.log(JSON.stringify(response.data))
             this.tableData = response.data.tableData
-            // alert(JSON.stringify(this.tableData))
             this.totalSize = response.data.total
+            // console.log(JSON.stringify(this.tableData))
           } else {
             this.$message.error(response.data.message)
           }
@@ -321,7 +323,28 @@ export default {
       }
     },
     updatePassStatus(nval, id) {
-
+      const param = {
+        'email': id,
+        'valid': nval
+      }
+      return new Promise((resolve, reject) => {
+        update(param).then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('删除文章失败!')
+          }
+          if (response.data.code === 200) {
+            this.$notify({
+              title: '更新状态成功',
+              message: '更新用户验证情况成功!',
+              type: 'success'
+            })
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
     },
     handleDownload() {
       this.downloadLoading = true

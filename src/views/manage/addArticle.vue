@@ -9,11 +9,17 @@
         <el-input v-model="form.author" :placeholder="$t('tip.author')" autocomplete="off"/>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" :label="$t('i18nView.type')" prop="type">
-        <el-select v-model="form.type" :placeholder="$t('tip.type')">
+        <el-select v-if="roles.includes('admin')" v-model="form.type" :placeholder="$t('tip.type')">
           <el-option :label="$t('i18nView.notice')" value="1000"/>
           <el-option :label="$t('i18nView.news')" value="1001"/>
           <el-option :label="$t('i18nView.legal')" value="1002"/>
           <el-option :label="$t('i18nView.others')" value="1003"/>
+        </el-select>
+        <el-select v-if="roles.includes('common')" v-model="form.type" :placeholder="$t('tip.type')">
+          <el-option :label="$t('i18nView.notice')" value="1100"/>
+          <el-option :label="$t('i18nView.news')" value="1101"/>
+          <el-option :label="$t('i18nView.activity')" value="1102"/>
+          <el-option :label="$t('i18nView.chapter')" value="1103"/>
         </el-select>
       </el-form-item>
     </el-form>
@@ -30,6 +36,8 @@
 import TinymceDemo from '@/components/Tinymce'
 import { add } from '@/api/article'
 import local from '@/views/i18n-demo/local'
+import { mapGetters } from 'vuex'
+
 const viewName = 'i18nView'
 export default {
   components: { TinymceDemo },
@@ -97,7 +105,10 @@ export default {
         this.$i18n.locale = lang
         this.$store.dispatch('setLanguage', lang)
       }
-    }
+    },
+    ...mapGetters([
+      'roles'
+    ])
   },
   watch: {
   },

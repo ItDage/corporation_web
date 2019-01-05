@@ -5,7 +5,7 @@
     </code>
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
       <el-form-item :label="$t('i18nView.school')" prop="school">
-        <el-input v-model="ruleForm.school" :placeholder="$t('tip.school')"/>
+        <el-input v-model="ruleForm.school" :placeholder="$t('tip.school')" :disabled="true"/>
       </el-form-item>
       <el-form-item :label="$t('i18nView.identification')" prop="identification">
         <el-input v-model="ruleForm.identification" :placeholder="$t('tip.identification')"/>
@@ -13,12 +13,28 @@
       <el-form-item :label="$t('i18nView.phone')" prop="phone">
         <el-input v-model="ruleForm.phone" :placeholder="$t('tip.phone')"/>
       </el-form-item>
-      <el-form-item :label="$t('i18nView.corporation')" prop="corporation">
-        <el-input v-model="ruleForm.corporation" :placeholder="$t('tip.corporation')"/>
-      </el-form-item>
-      <el-form-item :label="$t('i18nView.corporationDesc')" prop="corporationDesc">
-        <el-input v-model="ruleForm.corporationDesc" :placeholder="$t('tip.corporationDesc')"/>
-      </el-form-item>
+      <span v-if="roles.includes('corporation_admin', 'common')">
+        <el-form-item :label="$t('i18nView.corporation')" prop="corporation">
+          <el-input v-model="ruleForm.corporation" :placeholder="$t('tip.corporation')"/>
+        </el-form-item>
+        <el-form-item :label="$t('i18nView.corporationDesc')" prop="corporationDesc">
+          <el-input v-model="ruleForm.corporationDesc" :placeholder="$t('tip.corporationDesc')"/>
+        </el-form-item>
+      </span>
+      <span v-if="roles.includes('student')">
+        <el-form-item :label="$t('i18nView.corporation')">
+          <el-select v-model="ruleForm.corporation" filterable placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('i18nView.corporationDesc')" prop="corporationDesc">
+          <el-input v-model="ruleForm.corporationDesc" :placeholder="$t('tip.corporationDesc')"/>
+        </el-form-item>
+      </span>
       <el-form-item :label="$t('i18nView.description')" prop="description">
         <el-input v-model="ruleForm.description" :placeholder="$t('tip.description')" type="textarea"/>
       </el-form-item>
@@ -45,8 +61,11 @@
 <script>
 import uploadFile from '@/views/manage/template/uploadFile'
 import { delFile, getToken, upload } from '@/api/qiniu'
-import { add } from '@/api/checkup'
+import { add, getValidCorBySchool } from '@/api/checkup'
 import { validPhone } from '../../utils/validate'
+import { getUserInfo } from '@/api/userMethod'
+import { mapGetters } from 'vuex'
+
 import local from '@/views/i18n-demo/local'
 const viewName = 'i18nView'
 
@@ -78,15 +97,20 @@ export default {
           { required: true, trigger: 'blur', validator: validPhone }
         ],
         description: [
-          { required: true, message: '请填写活动形式', trigger: 'blur' }
+          { required: true, message: '请填写备注', trigger: 'blur' }
         ],
         corporation: [
-          { required: true, message: '请输入社团名称', trigger: 'blur' }
+          { required: true, message: '请输入社团名称', trigger: 'change' }
         ],
         corporationDesc: [
           { required: true, message: '请输入社团描述', trigger: 'blur' }
         ]
-      }
+      },
+      options: [{
+        value: '选项1',
+        label: '黄金糕'
+      }],
+      value8: ''
     }
   },
   computed: {
@@ -98,12 +122,20 @@ export default {
         this.$i18n.locale = lang
         this.$store.dispatch('setLanguage', lang)
       }
-    }
+    },
+    ...mapGetters([
+      'roles'
+    ])
   },
   created() {
     if (!this.$i18n.getLocaleMessage('en')[viewName]) {
       this.$i18n.mergeLocaleMessage('en', local.en)
       this.$i18n.mergeLocaleMessage('zh', local.zh)
+    }
+    this.loadUserInfo()
+    if (this.roles.includes('student')) {
+      // 普通用户--查询该用户所在学校有哪些可加入的社团
+      this.loadCorpList()
     }
   },
   methods: {
@@ -185,7 +217,7 @@ export default {
       })
     },
     del(file, fileList) {
-      console.log(JSON.stringify(file))
+      // console.log(JSON.stringify(file))
       const param = {
         'id': file.response.key
       }
@@ -199,6 +231,38 @@ export default {
               message: response.data.message,
               type: 'success'
             })
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    loadUserInfo() {
+      return new Promise((resolve, reject) => {
+        getUserInfo().then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('获取当前用户信息失败!')
+          }
+          if (response.data.code === 200) {
+            this.ruleForm = response.data.data
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    loadCorpList() {
+      return new Promise((resolve, reject) => {
+        getValidCorBySchool().then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('获取社团列表信息失败!')
+          }
+          if (response.data.code === 200) {
+            this.options = response.data.corporationList
           } else {
             this.$message.error(response.data.message)
           }

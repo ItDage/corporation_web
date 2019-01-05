@@ -3,18 +3,20 @@
     <div class="filter-container">
       <el-form :inline="true" :model="formInline" class="demo-form-inline" style="width: 100%">
         <el-form-item label="申请邮箱">
-          <el-input v-model="formInline.creater" placeholder="申请邮箱"/>
+          <el-input v-model="formInline.creater" placeholder="申请邮箱" clearable/>
         </el-form-item>
-        <el-form-item label="证件号码">
-          <el-input v-model="formInline.identification" placeholder="身份证号码"/>
-        </el-form-item>
+        <!--<el-form-item label="证件号码">-->
+          <!--<el-input v-model="formInline.identification" placeholder="身份证号码" clearable/>-->
+        <!--</el-form-item>-->
         <el-form-item label="手机号">
-          <el-input v-model="formInline.phone" placeholder="手机号"/>
+          <el-input v-model="formInline.phone" placeholder="手机号" clearable/>
         </el-form-item>
-        <el-form-item label="上传时间">
+        <el-form-item label="申请时间">
           <el-date-picker
             v-model="formInline.createDate"
             :picker-options="pickerOptions1"
+            format="yyyy 年 MM 月 dd 日"
+            value-format="yyyy-MM-dd"
             align="right"
             type="date"
             placeholder="选择日期"/>
@@ -31,14 +33,29 @@
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
         </el-form-item>
-        <!--<el-form-item>-->
-          <!--<el-button type="success" @click="showForm('addArticle')">新增</el-button>-->
-        <!--</el-form-item>-->
       </el-form>
     </div>
     <el-table
       :data="tableData"
       style="width: 100%">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="申请人">
+              <span>{{ props.row.user.username }}</span>
+            </el-form-item>
+            <el-form-item label="身份证号">
+              <span>{{ props.row.identification }}</span>
+            </el-form-item>
+            <el-form-item label="手机号">
+              <span>{{ props.row.phone }}</span>
+            </el-form-item>
+            <el-form-item label="备注">
+              <span>{{ props.row.description }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column
         type="index"
         align="center"
@@ -48,23 +65,19 @@
         label="学校"
         width="150px"/>
       <el-table-column
-        prop="user.username"
-        label="申请人"
-        width="65"/>
-      <el-table-column
         prop="creater"
         label="邮箱"
         width="120"/>
       <el-table-column
-        prop="identification"
-        label="身份证号"
+        prop="corporation"
+        label="申请社团"
         align="center"
         width="160"/>
       <el-table-column
-        prop="phone"
-        label="手机号"
+        prop="corporationDesc"
+        label="社团描述"
         align="center"
-        width="120"/>
+        width="160"/>
       <el-table-column
         label="申请时间"
         align="center"
@@ -86,12 +99,12 @@
             active-value="01"
             inactive-text="否"
             inactive-value="00"
-            @change="updatePassStatus($event, scope.row.id)"/>
+            @change="updatePassStatus($event, scope.row.id, scope.row.creater)"/>
         </template>
       </el-table-column>
       <el-table-column
         prop="fileEntityList.name"
-        label="查看文件"
+        label="审核文件"
         align="center"
         width="100">
         <template slot-scope="scope">
@@ -103,11 +116,6 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="description"
-        label="备注"
-        align="center"
-        width="100"/>
       <el-table-column label="操作" align="center" width="200">
         <template slot-scope="scope">
           <el-button
@@ -214,7 +222,7 @@ export default {
       pageSize: 10,
       title: '新增文章',
       opr: 'add',
-      fileData: '',
+      fileData: null,
       article: {
         id: 1,
         title: null,
@@ -303,7 +311,7 @@ export default {
           }
           if (response.data.code === 200) {
             this.tableData = response.data.tableData
-            // alert(JSON.stringify(this.tableData))
+            console.log(JSON.stringify(this.tableData))
             this.totalSize = response.data.total
           } else {
             this.$message.error(response.data.message)
@@ -338,10 +346,11 @@ export default {
         this.refreshTab()
       }
     },
-    updatePassStatus(nval, id) {
+    updatePassStatus(nval, id, creater) {
       const param = {
         'id': id,
-        'ispass': nval
+        'ispass': nval,
+        'creater': creater
       }
       return new Promise((resolve, reject) => {
         update(param).then(response => {
@@ -389,3 +398,18 @@ export default {
   }
 }
 </script>
+<style>
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+</style>
+
