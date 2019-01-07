@@ -13,7 +13,7 @@
       <el-form-item :label="$t('i18nView.phone')" prop="phone">
         <el-input v-model="ruleForm.phone" :placeholder="$t('tip.phone')"/>
       </el-form-item>
-      <span v-if="roles.includes('corporation_admin', 'common')">
+      <span v-if="roles.includes('corporation_admin') || roles.includes('common') ">
         <el-form-item :label="$t('i18nView.corporation')" prop="corporation">
           <el-input v-model="ruleForm.corporation" :placeholder="$t('tip.corporation')"/>
         </el-form-item>
@@ -22,7 +22,7 @@
         </el-form-item>
       </span>
       <span v-if="roles.includes('student')">
-        <el-form-item :label="$t('i18nView.corporation')">
+        <el-form-item :label="$t('i18nView.corporation')" prop="corporation">
           <el-select v-model="ruleForm.corporation" filterable placeholder="请选择">
             <el-option
               v-for="item in options"
@@ -100,7 +100,7 @@ export default {
           { required: true, message: '请填写备注', trigger: 'blur' }
         ],
         corporation: [
-          { required: true, message: '请输入社团名称', trigger: 'change' }
+          { required: true, message: '请输入社团名称', trigger: 'blur' }
         ],
         corporationDesc: [
           { required: true, message: '请输入社团描述', trigger: 'blur' }
@@ -174,20 +174,18 @@ export default {
     beforeUpload(file) {
       const _self = this
       this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          return new Promise((resolve, reject) => {
-            getToken().then(response => {
-              const key = response.data.data.qiniu_key + file.name
-              const token = response.data.data.qiniu_token
-              _self._data.dataObj.token = token
-              _self._data.dataObj.key = key
-              resolve(true)
-            }).catch(err => {
-              console.log(err)
-              reject(false)
-            })
+        return new Promise((resolve, reject) => {
+          getToken().then(response => {
+            const key = response.data.data.qiniu_key + file.name
+            const token = response.data.data.qiniu_token
+            _self._data.dataObj.token = token
+            _self._data.dataObj.key = key
+            resolve(true)
+          }).catch(err => {
+            console.log(err)
+            reject(false)
           })
-        }
+        })
       })
     },
     uploadSuccess(response, file, fileList) {
