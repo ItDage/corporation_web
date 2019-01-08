@@ -106,10 +106,7 @@ export default {
           { required: true, message: '请输入社团描述', trigger: 'blur' }
         ]
       },
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }],
+      options: [],
       value8: ''
     }
   },
@@ -173,18 +170,16 @@ export default {
     },
     beforeUpload(file) {
       const _self = this
-      this.$refs.ruleForm.validate((valid) => {
-        return new Promise((resolve, reject) => {
-          getToken().then(response => {
-            const key = response.data.data.qiniu_key + file.name
-            const token = response.data.data.qiniu_token
-            _self._data.dataObj.token = token
-            _self._data.dataObj.key = key
-            resolve(true)
-          }).catch(err => {
-            console.log(err)
-            reject(false)
-          })
+      return new Promise((resolve, reject) => {
+        getToken().then(response => {
+          const key = response.data.data.qiniu_key + file.name
+          const token = response.data.data.qiniu_token
+          _self._data.dataObj.token = token
+          _self._data.dataObj.key = key
+          resolve(true)
+        }).catch(err => {
+          console.log(err)
+          reject(false)
         })
       })
     },

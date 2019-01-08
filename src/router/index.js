@@ -206,6 +206,12 @@ export const asyncRouterMap = [
   {
     path: '/check',
     component: Layout,
+    meta: {
+      title: 'check',
+      icon: 'edit',
+      noCache: true,
+      roles: ['corporation_admin', 'student', 'common']
+    },
     children: [
       {
         path: 'index',
@@ -214,8 +220,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'check',
           icon: 'edit',
-          noCache: true,
-          roles: ['corporation_admin', 'student', 'common']
+          noCache: true
         }
       }
     ]
