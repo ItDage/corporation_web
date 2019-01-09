@@ -116,13 +116,7 @@ export default {
   components: { addArticle },
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        author: 'doctor',
-        address: '上海市普陀区金沙江路 1518 弄',
-        tag: '家'
-      }],
+      tableData: [],
       options: [{
         value: '1000',
         label: '公告'
@@ -142,31 +136,6 @@ export default {
         identification: null,
         school: '',
         valid: 1
-      },
-      pickerOptions1: {
-        disabledDate(time) {
-          return time.getTime() > Date.now()
-        },
-        shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            picker.$emit('pick', new Date())
-          }
-        }, {
-          text: '昨天',
-          onClick(picker) {
-            const date = new Date()
-            date.setTime(date.getTime() - 3600 * 1000 * 24)
-            picker.$emit('pick', date)
-          }
-        }, {
-          text: '一周前',
-          onClick(picker) {
-            const date = new Date()
-            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', date)
-          }
-        }]
       },
       addArticleVisible: false,
       dialogFormVisible: false,

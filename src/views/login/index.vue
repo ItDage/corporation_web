@@ -153,7 +153,7 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
+        username: this.$store.state.user.email,
         password: '123456'
       },
       registerForm: {

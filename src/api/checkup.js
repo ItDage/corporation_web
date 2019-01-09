@@ -39,3 +39,11 @@ export function getValidCorBySchool() {
   })
 }
 
+export function loadMyCorporation(data) {
+  return request({
+    url: '/checkup/loadMyCorporation',
+    method: 'post',
+    data
+  })
+}
+

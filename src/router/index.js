@@ -210,7 +210,7 @@ export const asyncRouterMap = [
       title: 'check',
       icon: 'edit',
       noCache: true,
-      roles: ['corporation_admin', 'student', 'common']
+      roles: ['student', 'common', 'corporation_common']
     },
     children: [
       {
@@ -239,6 +239,24 @@ export const asyncRouterMap = [
           icon: 'edit',
           noCache: true,
           roles: ['admin', 'corporation_admin']
+        }
+      }
+    ]
+  },
+  {
+    path: '/logOutCorporation',
+    component: Layout,
+    meta: { title: 'logOutCorporation', icon: 'icon', noCache: true, roles: ['corporation_common', 'corporation_admin'] },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/check/logout'),
+        name: 'logOutCorporation',
+        meta: {
+          title: 'logOutCorporation',
+          icon: 'edit',
+          noCache: true,
+          roles: ['corporation_common', 'corporation_admin']
         }
       }
     ]

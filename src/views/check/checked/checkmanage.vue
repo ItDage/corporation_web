@@ -167,13 +167,7 @@ export default {
   // components: { addArticle, uploadFile },
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        author: 'doctor',
-        address: '上海市普陀区金沙江路 1518 弄',
-        tag: '家'
-      }],
+      tableData: [],
       options: [{
         value: '00',
         label: '未通过'

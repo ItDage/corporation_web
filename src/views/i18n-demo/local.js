@@ -59,7 +59,10 @@ export default {
       isValid: '是否有效',
       role: '角色',
       activity: '活动',
-      chapter: '章程'
+      chapter: '章程',
+      createDate: '申请时间',
+      admin: '管理员',
+      logOutCorporation: '退团'
     },
     tip: {
       identification: '请输入身份证号',
@@ -141,7 +144,10 @@ export default {
       isValid: 'isValid',
       role: 'role',
       activity: 'activity',
-      chapter: 'chapter'
+      chapter: 'chapter',
+      createDate: 'submitDate',
+      admin: 'admin',
+      logOutCorporation: 'logout'
     },
     tip: {
       identification: 'please enter identification',

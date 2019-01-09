@@ -12,6 +12,7 @@ export default {
     icons: '图标',
     check: '资质申请',
     checked: '资质审查',
+    logOutCorporation: '资质注销',
     noticeManage: '公告管理',
     templateManage: '模板管理',
     userManage: '用户管理',

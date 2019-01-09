@@ -7,6 +7,7 @@ const user = {
   state: {
     user: '',
     status: '',
+    email: 'admin',
     code: '',
     token: getToken(),
     name: '',
@@ -42,6 +43,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_EMAIL: (state, email) => {
+      state.email = email
     }
   },
 
@@ -77,6 +81,7 @@ const user = {
           commit('SET_NAME', data.name)
           commit('SET_AVATAR', data.avatar)
           commit('SET_INTRODUCTION', data.introduction)
+          commit('SET_EMAIL', data.email)
           resolve(response)
         }).catch(error => {
           reject(error)

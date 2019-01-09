@@ -21,7 +21,7 @@
           <el-input v-model="ruleForm.corporationDesc" :placeholder="$t('tip.corporationDesc')"/>
         </el-form-item>
       </span>
-      <span v-if="roles.includes('student')">
+      <span v-if="roles.includes('student') || roles.includes('corporation_common')">
         <el-form-item :label="$t('i18nView.corporation')" prop="corporation">
           <el-select v-model="ruleForm.corporation" filterable placeholder="请选择">
             <el-option
@@ -130,7 +130,7 @@ export default {
       this.$i18n.mergeLocaleMessage('zh', local.zh)
     }
     this.loadUserInfo()
-    if (this.roles.includes('student')) {
+    if (this.roles.includes('student') || this.roles.includes('corporation_common')) {
       // 普通用户--查询该用户所在学校有哪些可加入的社团
       this.loadCorpList()
     }
