@@ -54,7 +54,7 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row.email)">{{ $t('i18nView.logOutCorporation') }}</el-button>
+            @click="logout(scope.row)">{{ $t('i18nView.logOutCorporation') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -69,20 +69,22 @@
         @size-change="handleSizeChange2"
         @current-change="handleCurrentChange"/>
     </div>
+    <LogoutCorpApplication v-if="dialogFormVisible" ref="LogoutCorpApplication" :visible.sync="dialogFormVisible" :corporation.sync="currentCorporation" :email.sync="currentEmail"/>
   </div>
 </template>
 <script>
 import uploadFile from '@/views/manage/template/uploadFile'
-import { delFile, getToken, upload } from '@/api/qiniu'
+import { getToken, upload } from '@/api/qiniu'
 import { loadMyCorporation } from '@/api/checkup'
 import { mapGetters } from 'vuex'
 import { parseTime } from '@/utils'
+import LogoutCorpApplication from '@/views/check/logout/logoutCorpApplication'
 
 import local from '@/views/i18n-demo/local'
 const viewName = 'i18nView'
 
 export default {
-  components: { uploadFile },
+  components: { uploadFile, LogoutCorpApplication },
   data() {
     return {
       tableData: [],
@@ -118,7 +120,10 @@ export default {
       currentPage: 1,
       totalSize: 0,
       pageSize: 10,
-      downloadLoading: false
+      downloadLoading: false,
+      dialogFormVisible: false,
+      currentCorporation: null,
+      currentEmail: this.$store.state.user.email
     }
   },
   computed: {
@@ -146,69 +151,9 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
     },
-    beforeUpload(file) {
-      const _self = this
-      return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.data.qiniu_key + file.name
-          const token = response.data.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          resolve(true)
-        }).catch(err => {
-          console.log(err)
-          reject(false)
-        })
-      })
-    },
-    uploadSuccess(response, file, fileList) {
-      const id = response.key
-      const name = file.name
-      const secondType = this.ruleForm.school
-      return new Promise((resolve, reject) => {
-        upload(id, name, this.type, secondType).then(response => {
-          const code = response.data.code
-          if (code === 200) {
-            this.$notify({
-              title: response.data.message,
-              message: name + response.data.message,
-              type: 'success'
-            })
-          } else {
-            this.$notify.error({
-              title: response.data.message,
-              message: name + response.data.message
-            })
-          }
-          resolve(true)
-        }).catch(err => {
-          console.log(err)
-          reject(false)
-        })
-      })
-    },
-    del(file, fileList) {
-      // console.log(JSON.stringify(file))
-      const param = {
-        'id': file.response.key
-      }
-      return new Promise((resolve, reject) => {
-        delFile(param).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('删除文件失败!')
-          }
-          if (response.data.code === 200) {
-            this.$notify({
-              message: response.data.message,
-              type: 'success'
-            })
-          } else {
-            this.$message.error(response.data.message)
-          }
-        }).catch(error => {
-          reject(error)
-        })
-      })
+    logout(row) {
+      this.dialogFormVisible = true
+      this.currentCorporation = row.corporation
     },
     loadTableData() {
       const param = {
@@ -261,6 +206,47 @@ export default {
           bookType: 'xlsx'
         })
         this.downloadLoading = false
+      })
+    },
+    beforeUpload(file) {
+      const _self = this
+      return new Promise((resolve, reject) => {
+        getToken().then(response => {
+          const key = response.data.data.qiniu_key + file.name
+          const token = response.data.data.qiniu_token
+          _self._data.dataObj.token = token
+          _self._data.dataObj.key = key
+          resolve(true)
+        }).catch(err => {
+          console.log(err)
+          reject(false)
+        })
+      })
+    },
+    uploadSuccess(response, file, fileList) {
+      const id = response.key
+      const name = file.name
+      const secondType = this.ruleForm.school
+      return new Promise((resolve, reject) => {
+        upload(id, name, this.type, secondType).then(response => {
+          const code = response.data.code
+          if (code === 200) {
+            this.$notify({
+              title: response.data.message,
+              message: name + response.data.message,
+              type: 'success'
+            })
+          } else {
+            this.$notify.error({
+              title: response.data.message,
+              message: name + response.data.message
+            })
+          }
+          resolve(true)
+        }).catch(err => {
+          console.log(err)
+          reject(false)
+        })
       })
     },
     formatJson(filterVal, jsonData) {

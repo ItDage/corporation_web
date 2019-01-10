@@ -62,7 +62,9 @@ export default {
       chapter: '章程',
       createDate: '申请时间',
       admin: '管理员',
-      logOutCorporation: '退团'
+      logOutCorporation: '退团',
+      reason: '原因',
+      application: '申请'
     },
     tip: {
       identification: '请输入身份证号',
@@ -82,7 +84,8 @@ export default {
       corporation: '请输入社团名称',
       description: '请输入备注',
       corporationDesc: '请输入社团描述',
-      validCode: '请输入验证码'
+      validCode: '请输入验证码',
+      reason: '请输入原因'
     }
   },
   en: {
@@ -147,7 +150,9 @@ export default {
       chapter: 'chapter',
       createDate: 'submitDate',
       admin: 'admin',
-      logOutCorporation: 'logout'
+      logOutCorporation: 'logout',
+      reason: 'reason',
+      application: 'application'
     },
     tip: {
       identification: 'please enter identification',
@@ -166,7 +171,8 @@ export default {
       corporation: 'please enter corporation name',
       description: 'please enter remark',
       corporationDesc: 'please enter corporation description',
-      validCode: 'please enter valid code'
+      validCode: 'please enter valid code',
+      reason: 'please enter valid reason'
     }
   },
   es: {

@@ -12,10 +12,7 @@ export function getAllUser(token) {
   })
 }
 
-export function sendValidCode(email) {
-  const data = {
-    email
-  }
+export function sendValidCode(data) {
   return request({
     url: '/user/sendValidCode',
     method: 'post',
