@@ -9,6 +9,7 @@ export default {
     directivePermission: 'Directive Permission',
     icons: 'Icons',
     components: 'Components',
+    logOutCorporationAdmin: 'logoutCorporationManage',
     componentIndex: 'Introduction',
     tinymce: 'Tinymce',
     markdown: 'Markdown',

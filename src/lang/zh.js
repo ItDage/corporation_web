@@ -13,6 +13,7 @@ export default {
     check: '资质申请',
     checked: '资质审查',
     logOutCorporation: '资质注销',
+    logOutCorporationAdmin: '退团管理',
     noticeManage: '公告管理',
     templateManage: '模板管理',
     userManage: '用户管理',

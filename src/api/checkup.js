@@ -47,3 +47,34 @@ export function loadMyCorporation(data) {
   })
 }
 
+export function application(data) {
+  return request({
+    url: '/logoutCorp/add',
+    method: 'post',
+    data
+  })
+}
+
+export function getReason(data) {
+  return request({
+    url: '/logoutCorp/getReason',
+    method: 'post',
+    data
+  })
+}
+
+export function loadLogoutCorporation(data) {
+  return request({
+    url: '/logoutCorp/manage',
+    method: 'post',
+    data
+  })
+}
+
+export function agreeLogout(data) {
+  return request({
+    url: '/logoutCorp/agreeLogout',
+    method: 'post',
+    data
+  })
+}

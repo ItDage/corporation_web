@@ -325,7 +325,7 @@ export default {
           this.isSend = true
           const param = {
             'email': this.registerForm.email,
-            'type': 1
+            'type': '1'
           }
           return new Promise((resolve, reject) => {
             sendValidCode(JSON.stringify(param)).then(response => {

@@ -246,7 +246,7 @@ export const asyncRouterMap = [
   {
     path: '/logOutCorporation',
     component: Layout,
-    meta: { title: 'logOutCorporation', icon: 'icon', noCache: true, roles: ['corporation_common', 'corporation_admin'] },
+    meta: { title: 'logOutCorporation', icon: 'icon', noCache: true, roles: ['corporation_common'] },
     children: [
       {
         path: 'index',
@@ -256,7 +256,25 @@ export const asyncRouterMap = [
           title: 'logOutCorporation',
           icon: 'edit',
           noCache: true,
-          roles: ['corporation_common', 'corporation_admin']
+          roles: ['corporation_common']
+        }
+      }
+    ]
+  },
+  {
+    path: '/logOutCorporationAdmin',
+    component: Layout,
+    meta: { title: 'logOutCorporationAdmin', icon: 'icon', noCache: true, roles: ['corporation_admin'] },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/check/logout/logoutManage'),
+        name: 'logOutCorporationAdmin',
+        meta: {
+          title: 'logOutCorporationAdmin',
+          icon: 'edit',
+          noCache: true,
+          roles: ['corporation_admin']
         }
       }
     ]

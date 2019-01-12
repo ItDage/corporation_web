@@ -31,9 +31,6 @@
               :value="item.value"/>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('i18nView.corporationDesc')" prop="corporationDesc">
-          <el-input v-model="ruleForm.corporationDesc" :placeholder="$t('tip.corporationDesc')"/>
-        </el-form-item>
       </span>
       <el-form-item :label="$t('i18nView.description')" prop="description">
         <el-input v-model="ruleForm.description" :placeholder="$t('tip.description')" type="textarea"/>

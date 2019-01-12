@@ -64,7 +64,11 @@ export default {
       admin: '管理员',
       logOutCorporation: '退团',
       reason: '原因',
-      application: '申请'
+      application: '申请',
+      cancel: '取消',
+      confirm: '确认',
+      applicant: '申请人',
+      agree: '同意'
     },
     tip: {
       identification: '请输入身份证号',
@@ -85,7 +89,8 @@ export default {
       description: '请输入备注',
       corporationDesc: '请输入社团描述',
       validCode: '请输入验证码',
-      reason: '请输入原因'
+      reason: '请输入原因',
+      applicant: '请输入申请人'
     }
   },
   en: {
@@ -152,7 +157,11 @@ export default {
       admin: 'admin',
       logOutCorporation: 'logout',
       reason: 'reason',
-      application: 'application'
+      application: 'application',
+      cancel: 'cancel',
+      confirm: 'confirm',
+      applicant: 'applicant',
+      agree: 'agree'
     },
     tip: {
       identification: 'please enter identification',
@@ -172,7 +181,9 @@ export default {
       description: 'please enter remark',
       corporationDesc: 'please enter corporation description',
       validCode: 'please enter valid code',
-      reason: 'please enter valid reason'
+      reason: 'please enter valid reason',
+      date: 'please enter date',
+      applicant: 'please enter applicant'
     }
   },
   es: {
