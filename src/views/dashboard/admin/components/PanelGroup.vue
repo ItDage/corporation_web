@@ -77,7 +77,8 @@ export default {
             reject('获取社团列表失败!')
           }
           if (response.data.code === 200) {
-            this.count1 = response.data.count1
+            console.log(response.data.count)
+            this.count1 = response.data.count.total
             this.count2 = response.data.count2
             this.count3 = response.data.count3
             this.count4 = response.data.count4
