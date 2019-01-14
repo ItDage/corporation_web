@@ -58,3 +58,10 @@ export function delUser(data) {
     data
   })
 }
+
+export function count() {
+  return request({
+    url: '/statistics/count',
+    method: 'post'
+  })
+}

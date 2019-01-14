@@ -45,7 +45,8 @@ export default {
       register: '注册',
       school: '学校',
       avatar: '上传头像',
-      userList: '注册人数',
+      applications: '申请人数',
+      confirms: '通过人数',
       applyList: '资质申请',
       noticeList: '通知列表',
       templateList: '模板列表',
@@ -68,7 +69,9 @@ export default {
       cancel: '取消',
       confirm: '确认',
       applicant: '申请人',
-      agree: '同意'
+      agree: '同意',
+      fileTemplate: '文件模板',
+      article: '文章数量'
     },
     tip: {
       identification: '请输入身份证号',

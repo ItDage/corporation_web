@@ -6,8 +6,8 @@
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">{{ $t('i18nView.userList') }}</div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num"/>
+          <div class="card-panel-text">{{ $t('i18nView.applications') }}</div>
+          <count-to :start-val="0" :end-val="count1" :duration="2600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -17,8 +17,8 @@
           <svg-icon icon-class="message" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">{{ $t('i18nView.applyList') }}</div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num"/>
+          <div class="card-panel-text">{{ $t('i18nView.confirms') }}</div>
+          <count-to :start-val="0" :end-val="count2" :duration="3000" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -28,8 +28,8 @@
           <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">{{ $t('i18nView.noticeList') }}</div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num"/>
+          <div class="card-panel-text">{{ $t('i18nView.fileTemplate') }}</div>
+          <count-to :start-val="0" :end-val="count3" :duration="3200" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -39,8 +39,8 @@
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">{{ $t('i18nView.templateList') }}</div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num"/>
+          <div class="card-panel-text">{{ $t('i18nView.article') }}</div>
+          <count-to :start-val="0" :end-val="count4" :duration="3600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -48,15 +48,46 @@
 </template>
 
 <script>
+import { count } from '@/api/userMethod'
 import CountTo from 'vue-count-to'
 
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      count1: 0,
+      count2: 0,
+      count3: 0,
+      count4: 0
+    }
+  },
+  created() {
+    this.loadCountData()
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    loadCountData() {
+      return new Promise((resolve, reject) => {
+        count().then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('获取社团列表失败!')
+          }
+          if (response.data.code === 200) {
+            this.count1 = response.data.count1
+            this.count2 = response.data.count2
+            this.count3 = response.data.count3
+            this.count4 = response.data.count4
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
     }
   }
 }

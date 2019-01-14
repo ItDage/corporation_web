@@ -15,7 +15,7 @@
           <el-option :label="$t('i18nView.legal')" value="1002"/>
           <el-option :label="$t('i18nView.others')" value="1003"/>
         </el-select>
-        <el-select v-if="roles.includes('common')" v-model="form.type" :placeholder="$t('tip.type')">
+        <el-select v-if="roles.includes('corporation_admin')" v-model="form.type" :placeholder="$t('tip.type')">
           <el-option :label="$t('i18nView.notice')" value="1100"/>
           <el-option :label="$t('i18nView.news')" value="1101"/>
           <el-option :label="$t('i18nView.activity')" value="1102"/>
