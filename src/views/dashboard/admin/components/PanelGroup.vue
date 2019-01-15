@@ -60,7 +60,15 @@ export default {
       count1: 0,
       count2: 0,
       count3: 0,
-      count4: 0
+      count4: 0,
+      countList: [],
+      countList2: [],
+      countList4: [],
+      countList3: [],
+      date: [],
+      date2: [],
+      date3: [],
+      date4: []
     }
   },
   created() {
@@ -68,7 +76,27 @@ export default {
   },
   methods: {
     handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+      // this.$emit('handleSetLineChartData', type)
+      var temp = {}
+      if (type === 'userList') {
+        temp = {
+          expectedData: [5, 10, 5, 10, 5, 10, 5],
+          actualData: this.countList
+        }
+        this.$emit('handleSetLineChartData', temp)
+      } else if (type === 'applyList') {
+        temp = {
+          expectedData: [5, 10, 5, 10, 5, 10, 5],
+          actualData: this.countList2
+        }
+        this.$emit('handleSetLineChartData', temp)
+      } else if (type === 'noticeList') {
+        temp = {
+          expectedData: [5, 10, 5, 10, 5, 10, 5],
+          actualData: this.countList3
+        }
+        this.$emit('handleSetLineChartData', temp, this.date3)
+      }
     },
     loadCountData() {
       return new Promise((resolve, reject) => {
@@ -77,11 +105,18 @@ export default {
             reject('获取社团列表失败!')
           }
           if (response.data.code === 200) {
-            console.log(response.data.count)
             this.count1 = response.data.count.total
-            this.count2 = response.data.count2
-            this.count3 = response.data.count3
-            this.count4 = response.data.count4
+            this.count2 = response.data.count2.total
+            this.count3 = response.data.count3.total
+            this.count4 = response.data.count4.total
+            this.countList = response.data.count.count
+            this.countList2 = response.data.count2.count
+            this.countList3 = response.data.count3.count
+            this.countList4 = response.data.count4.count
+            this.date = response.data.count.date
+            this.date2 = response.data.count2.date
+            this.date3 = response.data.count3.date
+            this.date4 = response.data.count4.date
           } else {
             this.$message.error(response.data.message)
           }

@@ -6,7 +6,7 @@
     <panel-group @handleSetLineChartData="handleSetLineChartData"/>
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData"/>
+      <line-chart :chart-data="lineChartData" : chart-data-x="chartDataX"/>
     </el-row>
 
     <el-row :gutter="32">
@@ -89,7 +89,8 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.userList
+      lineChartData: lineChartData.userList,
+      chartDataX: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     }
   },
   computed: {
@@ -112,8 +113,10 @@ export default {
     this.loadStatisticData()
   },
   methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+    handleSetLineChartData(type, datax) {
+      // this.lineChartData = lineChartData[type]
+      this.lineChartData = type
+      this.chartDataX = datax
     },
     loadStatisticData() {
       this.$store.dispatch('getStatistic').then(res => {

@@ -28,6 +28,10 @@ export default {
     chartData: {
       type: Object,
       required: true
+    },
+    chartDataX: {
+      type: Array,
+      required: true
     }
   },
   data() {
