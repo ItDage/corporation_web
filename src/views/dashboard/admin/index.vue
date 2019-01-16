@@ -3,10 +3,10 @@
 
     <github-corner style="position: absolute; top: 0px; border: 0; right: 0;"/>
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData"/>
+    <panel-group ref="PanelGroup" @handleSetLineChartData="handleSetLineChartData"/>
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" : chart-data-x="chartDataX"/>
+      <line-chart :chart-data="lineChartData"/>
     </el-row>
 
     <el-row :gutter="32">
@@ -53,26 +53,8 @@ import TransactionTable from './components/TransactionTable'
 import TodoList from './components/TodoList'
 import BoxCard from './components/BoxCard'
 import local from '@/views/i18n-demo/local'
+import { count } from '@/api/userMethod'
 const viewName = 'i18nView'
-
-const lineChartData = {
-  userList: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  applyList: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  noticeList: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  templateList: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
 
 export default {
   name: 'DashboardAdmin',
@@ -89,8 +71,7 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.userList,
-      chartDataX: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      lineChartData: { 'expectedData': [10], 'actualData': [1, 1], 'chartDataX': ['2019-01-09', '2019-01-17'] }
     }
   },
   computed: {
@@ -112,16 +93,37 @@ export default {
     }
     this.loadStatisticData()
   },
+  mounted() {
+    this.loadCountData()
+  },
   methods: {
-    handleSetLineChartData(type, datax) {
-      // this.lineChartData = lineChartData[type]
+    handleSetLineChartData(type) {
       this.lineChartData = type
-      this.chartDataX = datax
     },
     loadStatisticData() {
       this.$store.dispatch('getStatistic').then(res => {
       }).catch((err) => {
         console.log(err)
+      })
+    },
+    loadCountData() {
+      return new Promise((resolve, reject) => {
+        count().then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('获取社团列表失败!')
+          }
+          if (response.data.code === 200) {
+            this.lineChartData = {
+              expectedData: [0],
+              actualData: response.data.count.count,
+              chartDataX: response.data.count.date
+            }
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
       })
     }
   }

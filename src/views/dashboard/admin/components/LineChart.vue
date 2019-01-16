@@ -28,10 +28,6 @@ export default {
     chartData: {
       type: Object,
       required: true
-    },
-    chartDataX: {
-      type: Array,
-      required: true
     }
   },
   data() {
@@ -47,6 +43,8 @@ export default {
         this.setOptions(val)
       }
     }
+  },
+  created() {
   },
   mounted() {
     this.initChart()
@@ -82,10 +80,10 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ expectedData, actualData, chartDataX } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: chartDataX,
           boundaryGap: false,
           axisTick: {
             show: false

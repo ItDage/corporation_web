@@ -80,23 +80,30 @@ export default {
       var temp = {}
       if (type === 'userList') {
         temp = {
-          expectedData: [5, 10, 5, 10, 5, 10, 5],
-          actualData: this.countList
+          expectedData: this.handlerExpect(this.countList),
+          actualData: this.countList,
+          chartDataX: this.date
         }
-        this.$emit('handleSetLineChartData', temp)
       } else if (type === 'applyList') {
         temp = {
-          expectedData: [5, 10, 5, 10, 5, 10, 5],
-          actualData: this.countList2
+          expectedData: this.handlerExpect(this.countList2),
+          actualData: this.countList2,
+          chartDataX: this.date2
         }
-        this.$emit('handleSetLineChartData', temp)
       } else if (type === 'noticeList') {
         temp = {
-          expectedData: [5, 10, 5, 10, 5, 10, 5],
-          actualData: this.countList3
+          expectedData: this.handlerExpect(this.countList3),
+          actualData: this.countList3,
+          chartDataX: this.date3
         }
-        this.$emit('handleSetLineChartData', temp, this.date3)
+      } else {
+        temp = {
+          expectedData: this.handlerExpect(this.countList4),
+          actualData: this.countList4,
+          chartDataX: this.date4
+        }
       }
+      this.$emit('handleSetLineChartData', temp)
     },
     loadCountData() {
       return new Promise((resolve, reject) => {
@@ -124,6 +131,14 @@ export default {
           reject(error)
         })
       })
+    },
+    handlerExpect(arr) {
+      const arr1 = []
+      Object.assign(arr1, arr)
+      arr1.map(function(value, index) {
+        arr1[index] = value + 1
+      })
+      return arr1
     }
   }
 }
