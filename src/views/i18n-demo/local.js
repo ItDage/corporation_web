@@ -71,7 +71,12 @@ export default {
       applicant: '申请人',
       agree: '同意',
       fileTemplate: '文件模板',
-      article: '文章数量'
+      article: '文章数量',
+      activityName: '活动名称',
+      activityDate: '活动时间',
+      activityAddress: '活动地址',
+      contact: '联系人',
+      needs: '人数'
     },
     tip: {
       identification: '请输入身份证号',
@@ -93,7 +98,11 @@ export default {
       corporationDesc: '请输入社团描述',
       validCode: '请输入验证码',
       reason: '请输入原因',
-      applicant: '请输入申请人'
+      applicant: '请输入申请人',
+      activityName: '请输入活动名称',
+      activityAddress: '请输入活动地址',
+      contact: '请输入联系人',
+      needs: '请输入人数'
     }
   },
   en: {
@@ -164,7 +173,12 @@ export default {
       cancel: 'cancel',
       confirm: 'confirm',
       applicant: 'applicant',
-      agree: 'agree'
+      agree: 'agree',
+      activityName: 'activityName',
+      activityDate: 'activityDate',
+      activityAddress: 'activityAddress',
+      contact: 'contact',
+      needs: 'needs'
     },
     tip: {
       identification: 'please enter identification',
@@ -186,7 +200,11 @@ export default {
       validCode: 'please enter valid code',
       reason: 'please enter valid reason',
       date: 'please enter date',
-      applicant: 'please enter applicant'
+      applicant: 'please enter applicant',
+      activityName: 'please enter activityName',
+      activityAddress: 'please enter activityAddress',
+      contact: 'please enter contact',
+      needs: 'please enter needs'
     }
   },
   es: {

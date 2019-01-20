@@ -37,8 +37,9 @@ service.interceptors.response.use(
    * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
    */
   response => {
+    // 405請求方法不支持
     const res = response.data
-    alert(response)
+    alert(response + '响应拦截器')
     console.log(res + 123)
     if (res.code !== 500) {
       Message({

@@ -14,6 +14,7 @@ export default {
     checked: '资质审查',
     logOutCorporation: '资质注销',
     logOutCorporationAdmin: '退团管理',
+    active: '活动管理',
     noticeManage: '公告管理',
     templateManage: '模板管理',
     userManage: '用户管理',

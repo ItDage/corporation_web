@@ -262,6 +262,24 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/active',
+    component: Layout,
+    meta: { title: 'active', icon: 'icon', noCache: true, roles: ['corporation_admin'] },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/manage/activity/manage'),
+        name: 'active',
+        meta: {
+          title: 'active',
+          icon: 'edit',
+          noCache: true,
+          roles: ['corporation_admin']
+        }
+      }
+    ]
+  },
+  {
     path: '/logOutCorporationAdmin',
     component: Layout,
     meta: { title: 'logOutCorporationAdmin', icon: 'icon', noCache: true, roles: ['corporation_admin'] },
