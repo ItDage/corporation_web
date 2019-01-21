@@ -10,6 +10,7 @@ export default {
     icons: 'Icons',
     components: 'Components',
     logOutCorporationAdmin: 'logoutCorporationManage',
+    myCorporation: 'myCorporation',
     active: 'activityManage',
     componentIndex: 'Introduction',
     tinymce: 'Tinymce',

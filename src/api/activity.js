@@ -17,3 +17,12 @@ export function getAllActivityByParam(data) {
     data
   })
 }
+
+// 获取活动列表
+export function delActivity(data) {
+  return request({
+    url: '/activity/delete',
+    method: 'post',
+    data
+  })
+}

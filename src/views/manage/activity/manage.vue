@@ -79,7 +79,7 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row.email)">{{ $t('i18nView.delete') }}</el-button>
+            @click="handleDelete(scope.$index, scope.row.id)">{{ $t('i18nView.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -101,8 +101,7 @@
 <script>
 
 import addArticle from './addActivity'
-import { delUser, update } from '@/api/userMethod'
-import { getAllActivityByParam } from '@/api/activity'
+import { getAllActivityByParam, delActivity } from '@/api/activity'
 import local from '@/views/i18n-demo/local'
 import { parseTime } from '@/utils'
 const viewName = 'i18nView'
@@ -185,20 +184,20 @@ export default {
     },
     handleDelete(index, id) {
       const param = {
-        'email': id
+        'id': id
       }
-      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该活动, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         return new Promise((resolve, reject) => {
-          delUser(param).then(response => {
+          delActivity(param).then(response => {
             if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-              reject('删除文章失败!')
+              reject('删除活动失败!')
             }
             if (response.data.code === 200) {
-              this.loadTableData(this.currentPage, this.pageSize, this.formInline.title, this.formInline.author, this.formInline.publishDate, this.formInline.type)
+              this.loadTableData()
               this.$message({
                 type: 'success',
                 message: response.data.message
@@ -227,11 +226,11 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.loadTableData(this.currentPage, val, this.formInline.title, this.formInline.author, this.formInline.publishDate, this.formInline.type)
+      this.loadTableData()
     },
     handleCurrentChange(val) {
       this.currentPage = val
-      this.loadTableData(val, this.pageSize, this.formInline.title, this.formInline.author, this.formInline.publishDate, this.formInline.type)
+      this.loadTableData()
     },
     showForm(refForm) {
       this.addArticleVisible = true
@@ -246,14 +245,12 @@ export default {
         'createDate': this.formInline.createDate,
         'address': this.formInline.address
       }
-      console.log(JSON.stringify(param))
       return new Promise((resolve, reject) => {
         getAllActivityByParam(JSON.stringify(param)).then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('获取文章列表失败!')
           }
           if (response.data.code === 200) {
-            console.log(response.data.tableData)
             this.tableData = response.data.tableData
             this.totalSize = response.data.total
             // console.log(JSON.stringify(this.tableData))
@@ -266,7 +263,7 @@ export default {
       })
     },
     refreshTab() {
-      this.loadTableData(this.currentPage, this.pageSize, this.formInline.title, this.formInline.author, this.formInline.publishDate, this.formInline.type)
+      this.loadTableData()
     },
     transferTag(scope) {
       var color = ''
@@ -290,41 +287,17 @@ export default {
         this.refreshTab()
       }
     },
-    updatePassStatus(nval, id) {
-      const param = {
-        'email': id,
-        'valid': nval
-      }
-      return new Promise((resolve, reject) => {
-        update(param).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('删除文章失败!')
-          }
-          if (response.data.code === 200) {
-            this.$notify({
-              title: '更新状态成功',
-              message: '更新用户验证情况成功!',
-              type: 'success'
-            })
-          } else {
-            this.$message.error(response.data.message)
-          }
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['邮箱', '姓名', '身份证', '手机号', '学校', '出生日期', '是否通过']
-        const filterVal = ['email', 'username', 'identification', 'phone', 'school', 'birth', 'valid']
+        const tHeader = ['活动名称', '活动时间', '活动地址', '内容', '联系人', '人数', '备注']
+        const filterVal = ['name', 'activityDate', 'address', 'content', 'contact', 'needs', 'description']
         const list = this.tableData
         const data = this.formatJson(filterVal, list)
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: '用户信息',
+          filename: '活动列表',
           autoWidth: true,
           bookType: 'xlsx'
         })

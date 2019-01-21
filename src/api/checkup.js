@@ -39,6 +39,7 @@ export function getValidCorBySchool() {
   })
 }
 
+// 退团--我的社团列表
 export function loadMyCorporation(data) {
   return request({
     url: '/checkup/loadMyCorporation',
@@ -68,6 +69,14 @@ export function loadLogoutCorporation(data) {
     url: '/logoutCorp/manage',
     method: 'post',
     data
+  })
+}
+
+// 首页-- 加载我的社团
+export function loadMyCorporationCard() {
+  return request({
+    url: '/checkup/loadMyCorporationCard',
+    method: 'post'
   })
 }
 

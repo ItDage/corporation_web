@@ -10,6 +10,7 @@ export default {
     changepassword: '修改密码',
     changeuserinfo: '修改资料',
     icons: '图标',
+    myCorporation: '我的社团',
     check: '资质申请',
     checked: '资质审查',
     logOutCorporation: '资质注销',

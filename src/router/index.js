@@ -204,6 +204,28 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/myCorporation',
+    component: Layout,
+    meta: {
+      title: 'myCorporation',
+      icon: 'edit',
+      noCache: true,
+      roles: ['student', 'common', 'corporation_common']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/usercenter/myCorporation/index'),
+        name: 'MyCorporation',
+        meta: {
+          title: 'myCorporation',
+          icon: 'edit',
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
     path: '/check',
     component: Layout,
     meta: {
