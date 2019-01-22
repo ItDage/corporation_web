@@ -1,15 +1,16 @@
 <template>
   <div style="padding: 10px 10px">
     <el-row>
-      <span v-for="o in 4" :key="o">
+      <span v-for="o in data" :key="o.createDate">
         <el-col :span="12">
-          <el-card class="box-card">
+          <el-card class="box-card" shadow="hover">
             <div slot="header" class="clearfix">
-              <span>卡片名称</span>
-              <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+              <span style="text-align: center">{{ o.corporation }}</span>
             </div>
-            <div v-for="o in 4" :key="o" class="text item">
-              {{ data }}
+            <div class="text item">
+              <p>社团简介: {{ o.corporationDesc }}</p>
+              <p>管理员: {{ o.admin }}</p>
+              <p>加入时间: {{ o.createDate }}</p>
             </div>
           </el-card>
         </el-col>
@@ -21,45 +22,79 @@
           :data="tableData"
           style="width: 100%">
           <el-table-column
-            prop="date"
-            label="日期"
-            width="180"/>
+            type="index"
+            align="center"
+            width="65"/>
           <el-table-column
+            :label="$t('i18nView.activityName')"
             prop="name"
-            label="姓名"
-            width="180"/>
+            width="150px"/>
           <el-table-column
+            :label="$t('i18nView.activityDate')"
+            prop="activityDate"/>
+          <el-table-column
+            :label="$t('i18nView.activityAddress')"
             prop="address"
-            label="地址"/>
+            align="center"/>
+          <el-table-column
+            :label="$t('i18nView.content')"
+            prop="content"
+            align="center"/>
+          <el-table-column
+            :label="$t('i18nView.contact')"
+            prop="contact"
+            align="center"/>
+          <el-table-column
+            :label="$t('i18nView.needs')"
+            prop="needs"
+            align="center"/>
+          <el-table-column
+            :label="$t('i18nView.description')"
+            prop="description"
+            align="center"/>
+          <el-table-column
+            :label="$t('i18nView.createDate')"
+            prop="createDate"
+            align="center"/>
+          <el-table-column :label="$t('i18nView.operate')" align="center">
+            <template slot-scope="scope">
+              <el-button
+                type="primary"
+                size="mini"
+                @click="handleAddActivity(scope.row)">{{ $t('i18nView.addActivity') }}</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                @click="handleAddActivity(scope.row)">{{ scope.row.commonType }}</el-button>
+            </template>
+          </el-table-column>
         </el-table>
+        <div class="block">
+          <el-pagination
+            :current-page="currentPage"
+            :page-sizes="[5]"
+            :total="totalSize"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"/>
+        </div>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
 import { loadMyCorporationCard } from '@/api/checkup'
+import { addActivity } from '@/api/activity'
 export default {
   name: 'Mycorporation',
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
-      data: null
+      tableData: [],
+      data: null,
+      totalSize: 0,
+      pageSize: 5,
+      currentPage: 1
     }
   },
   created() {
@@ -67,15 +102,50 @@ export default {
   },
   methods: {
     loadMyCorporationCard() {
+      const param = {
+        'currentPage': this.currentPage,
+        'pageSize': this.pageSize
+      }
       return new Promise((resolve, reject) => {
-        loadMyCorporationCard().then(response => {
+        loadMyCorporationCard(JSON.stringify(param)).then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
             reject('获取社团列表失败!')
           }
           if (response.data.code === 200) {
-            console.log(JSON.stringify(response.data.data))
-            this.data = response.data.tableData
-            // console.log(JSON.stringify(this.tableData))
+            this.data = response.data.corporationList
+            this.tableData = response.data.tableData
+            console.log(JSON.stringify(this.tableData))
+            this.totalSize = response.data.total
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.loadMyCorporationCard()
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.loadMyCorporationCard()
+    },
+    handleAddActivity(row) {
+      const param = {
+        'id': row.id
+      }
+      return new Promise((resolve, reject) => {
+        addActivity(JSON.stringify(param)).then(response => {
+          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('加入活动失败!')
+          }
+          if (response.data.code === 200) {
+            this.$message({
+              type: 'success',
+              message: response.data.message
+            })
           } else {
             this.$message.error(response.data.message)
           }

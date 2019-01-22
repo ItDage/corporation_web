@@ -73,10 +73,11 @@ export function loadLogoutCorporation(data) {
 }
 
 // 首页-- 加载我的社团
-export function loadMyCorporationCard() {
+export function loadMyCorporationCard(data) {
   return request({
     url: '/checkup/loadMyCorporationCard',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 

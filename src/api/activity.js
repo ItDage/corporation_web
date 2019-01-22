@@ -26,3 +26,12 @@ export function delActivity(data) {
     data
   })
 }
+
+// 加入活动
+export function addActivity(data) {
+  return request({
+    url: '/activity/addActivity',
+    method: 'post',
+    data
+  })
+}

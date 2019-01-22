@@ -40,6 +40,7 @@ export default {
       find: '查询',
       operate: '操作',
       edit: '编辑',
+      addActivity: '加入',
       delete: '删除',
       download: '下载',
       register: '注册',

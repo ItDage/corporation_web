@@ -248,7 +248,7 @@ export default {
       return new Promise((resolve, reject) => {
         getAllActivityByParam(JSON.stringify(param)).then(response => {
           if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('获取文章列表失败!')
+            reject('获取活动列表失败!')
           }
           if (response.data.code === 200) {
             this.tableData = response.data.tableData
