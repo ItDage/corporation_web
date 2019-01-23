@@ -59,13 +59,15 @@
           <el-table-column :label="$t('i18nView.operate')" align="center">
             <template slot-scope="scope">
               <el-button
+                v-if="scope.row.commonType == 0"
                 type="primary"
                 size="mini"
                 @click="handleAddActivity(scope.row)">{{ $t('i18nView.addActivity') }}</el-button>
               <el-button
-                type="primary"
+                v-if="scope.row.commonType == 1"
+                type="danger"
                 size="mini"
-                @click="handleAddActivity(scope.row)">{{ scope.row.commonType }}</el-button>
+                @click="handleExitActivity(scope.row)">{{ $t('i18nView.logout') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -85,7 +87,7 @@
 </template>
 <script>
 import { loadMyCorporationCard } from '@/api/checkup'
-import { addActivity } from '@/api/activity'
+import { addActivity, exitActivity } from '@/api/activity'
 export default {
   name: 'Mycorporation',
   data() {
@@ -114,7 +116,6 @@ export default {
           if (response.data.code === 200) {
             this.data = response.data.corporationList
             this.tableData = response.data.tableData
-            console.log(JSON.stringify(this.tableData))
             this.totalSize = response.data.total
           } else {
             this.$message.error(response.data.message)
@@ -146,11 +147,46 @@ export default {
               type: 'success',
               message: response.data.message
             })
+            this.loadMyCorporationCard()
           } else {
             this.$message.error(response.data.message)
           }
         }).catch(error => {
           reject(error)
+        })
+      })
+    },
+    handleExitActivity(row) {
+      const param = {
+        'id': row.id
+      }
+      this.$confirm('此操作将退出该活动, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          exitActivity(JSON.stringify(param)).then(response => {
+            if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
+              reject('退出该活动失败!')
+            }
+            if (response.data.code === 200) {
+              this.$message({
+                type: 'success',
+                message: response.data.message
+              })
+              this.loadMyCorporationCard()
+            } else {
+              this.$message.error(response.data.message)
+            }
+          }).catch(error => {
+            reject(error)
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出'
         })
       })
     }

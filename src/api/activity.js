@@ -35,3 +35,12 @@ export function addActivity(data) {
     data
   })
 }
+
+// 退出活动
+export function exitActivity(data) {
+  return request({
+    url: '/activity/exitActivity',
+    method: 'post',
+    data
+  })
+}

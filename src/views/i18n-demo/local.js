@@ -41,6 +41,7 @@ export default {
       operate: '操作',
       edit: '编辑',
       addActivity: '加入',
+      logout: '退出',
       delete: '删除',
       download: '下载',
       register: '注册',
@@ -179,7 +180,9 @@ export default {
       activityDate: 'activityDate',
       activityAddress: 'activityAddress',
       contact: 'contact',
-      needs: 'needs'
+      needs: 'needs',
+      logout: 'logout',
+      addActivity: 'add'
     },
     tip: {
       identification: 'please enter identification',
