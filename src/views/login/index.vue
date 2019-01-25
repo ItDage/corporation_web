@@ -113,6 +113,7 @@ import SocialSign from './socialsignin'
 import { sendValidCode, register } from '@/api/userMethod'
 import local from '@/views/i18n-demo/local'
 const viewName = 'i18nView'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Login',
@@ -219,7 +220,10 @@ export default {
       set(lang) {
         this.$i18n.locale = lang
         this.$store.dispatch('setLanguage', lang)
-      }
+      },
+      ...mapGetters([
+        'roles'
+      ])
     }
   },
   watch: {

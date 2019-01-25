@@ -44,3 +44,12 @@ export function exitActivity(data) {
     data
   })
 }
+
+// 查询参会者
+export function join(data) {
+  return request({
+    url: '/activity/join',
+    method: 'post',
+    data
+  })
+}

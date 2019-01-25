@@ -43,35 +43,50 @@
       <el-table-column
         :label="$t('i18nView.activityName')"
         prop="name"
-        width="150px"/>
+        width="120px"/>
       <el-table-column
         :label="$t('i18nView.activityDate')"
+        width="170px"
         prop="activityDate"/>
       <el-table-column
         :label="$t('i18nView.activityAddress')"
         prop="address"
+        width="120px"
         align="center"/>
       <el-table-column
         :label="$t('i18nView.content')"
         prop="content"
+        width="150px"
         align="center"/>
       <el-table-column
         :label="$t('i18nView.contact')"
         prop="contact"
+        width="100px"
         align="center"/>
       <el-table-column
         :label="$t('i18nView.needs')"
         prop="needs"
+        width="50px"
         align="center"/>
       <el-table-column
         :label="$t('i18nView.description')"
         prop="description"
+        width="150px"
         align="center"/>
       <el-table-column
         :label="$t('i18nView.createDate')"
         prop="createDate"
+        width="170px"
         align="center"/>
-      <el-table-column :label="$t('i18nView.operate')" align="center">
+      <el-table-column
+        :label="$t('i18nView.join')"
+        width="80px"
+        align="center">
+        <template slot-scope="scope">
+          <el-button type="text" @click="handleClick(scope.row)">查看</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('i18nView.operate')" width="150px" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -95,6 +110,7 @@
         @current-change="handleCurrentChange"/>
     </div>
     <addArticle v-if="addArticleVisible" ref="addArticle" :visible.sync="addArticleVisible" :title.sync="title" :operator.sync="opr" :article.sync="activity" @closeMain="parentFn" />
+    <joiner v-if="dialogVisible" ref="joiner" :visible.sync="dialogVisible" :id.sync="id"/>
   </div>
 </template>
 
@@ -104,9 +120,10 @@ import addArticle from './addActivity'
 import { getAllActivityByParam, delActivity } from '@/api/activity'
 import local from '@/views/i18n-demo/local'
 import { parseTime } from '@/utils'
+import joiner from '@/views/usercenter/myCorporation/joiner'
 const viewName = 'i18nView'
 export default {
-  components: { addArticle },
+  components: { addArticle, joiner },
   data() {
     return {
       tableData: [],
@@ -146,7 +163,9 @@ export default {
         contact: null,
         nedds: null,
         description: null
-      }
+      },
+      id: 0,
+      dialogVisible: false
     }
   },
   computed: {
@@ -312,6 +331,10 @@ export default {
           return v[j]
         }
       }))
+    },
+    handleClick(row) {
+      this.id = row.id
+      this.dialogVisible = true
     }
   }
 }
